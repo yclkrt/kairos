@@ -1,0 +1,43 @@
+ 1. OLMASI GEREKEN TEMEL ÖZELLİKLER (MVP)
+
+A. Kronometre & Zamanlayıcı Modülleri (En Kritik)
+
+Round Timer (Devre Saati): Ayarlanabilir çalışma süresi (örnek 2 dk), dinlenme süresi (30 sn), hazırlık süresi (10 sn).
+Sesli Uyarılar: Her tur bitiminde, dinlenme bitiminde ve son 5-3-1 saniyede zil/bip sesi.
+Interval (Tabata) Modu: Patlama (15 sn) - Dinlenme (10 sn) döngüsü.
+Süre Dolunca Otomatik Geçiş: Çalışma biter, dinlenme başlar; dinlenme biter, bir sonraki tura başlar.
+
+------------------------------------------------------------------------------------------
+B. Sporcu Takibi (Öğrenci Yönetimi)
+
+Sporcu Ekleme/Listeleme: İsim, kilo, yaş, kuşak seviyesi.
+Antrenman Kaydı: Hangi sporcunun kaç round yaptığı, toplam antrenman süresi.
+Performans Notu: Her tur sonrası 1-5 yıldız veya kısa not ekleme (örn: "Tekme hızı iyi, blok zayıf").
+
+------------------------------------------------------------------------------------------
+C. Egzersiz & Kombinasyon Kitaplığı
+
+Hazır Kombinasyonlar: "1-2-3 Tekme", "Ap Chagi + Dolyo Chagi" gibi önceden tanımlı.
+Round İçinde Göster: Antrenman sırasında yapılacak kombinasyon ekranda büyük puntoyla görünsün.
+Özel Kombinasyon Oluşturma: Kendi kombinasyonlarınızı ekleyip kaydedin.
+
+------------------------------------------------------------------------------------------
+D. Metronom (Tempo Tutucu)
+
+BPM Ayarı: Dakikadaki vuruş sayısı (60-180 arası).
+Titreşim/Ses: Sporcuların ritim çalışması için.
+
+------------------------------------------------------------------------------------------
+E. Round Skor Tablosu (Canlı Skor)
+
+Mavi / Kırmızı Skor: Sparring sırasında tıklayarak puan ekleme (+1, +2, +3).
+Penaltı Ekleme: Uyarı ve ceza puanı düşme.
+
+------------------------------------------------------------------------------------------
+🚀 2. GELİŞMİŞ ÖZELLİKLER (İlerleyen Sürümler)
+
+Sesli Komut: "Başlat", "Durdur", "Sonraki Tur" gibi komutları sesle yönetme.
+Antrenman Raporu (PDF/CSV): Haftalık antrenman özetini e-posta veya paylaş.
+Karanlık Mod/Aydınlık Mod: Salonda ışık durumuna göre.
+Apple Watch / Android Wear Desteği: Bileklikten tur kontrolü.
+Müzik Entegrasyonu: Spotify/Apple Music'ten çalan şarkıyı kısıp zili duyurma.
