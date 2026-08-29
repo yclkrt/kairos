@@ -18,10 +18,7 @@ class AppDrawer extends ConsumerWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.darkBackground,
-              Color(0xFF0D0D0D),
-            ],
+            colors: [AppColors.darkBackground, Color(0xFF0D0D0D)],
           ),
         ),
         child: Column(
@@ -29,9 +26,26 @@ class AppDrawer extends ConsumerWidget {
             _buildSportyHeader(context),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 children: [
                   _buildStatsCard(),
+                  const SizedBox(height: 16),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.dashboard_rounded,
+                    title: 'Ana Panel',
+                    subtitle: 'Genel bakış',
+                    route: Routes.dashboard,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.dashboard),
+                    gradientColors: [
+                      AppColors.workoutHigh,
+                      AppColors.workoutMedium,
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   _buildSectionLabel('ANTRENMAN'),
                   const SizedBox(height: 8),
@@ -40,10 +54,13 @@ class AppDrawer extends ConsumerWidget {
                     icon: Icons.fitness_center_rounded,
                     title: 'Antrenmanlar\u0131m',
                     subtitle: 'Haftal\u0131k program',
-                    route: Routes.home,
+                    route: Routes.trainingPlans,
                     currentLocation: currentLocation,
-                    onTap: () => _navigate(context, Routes.home),
-                    gradientColors: [AppColors.workoutHigh, AppColors.workoutMedium],
+                    onTap: () => _navigate(context, Routes.trainingPlans),
+                    gradientColors: [
+                      AppColors.workoutHigh,
+                      AppColors.workoutMedium,
+                    ],
                   ),
                   _buildModernMenuItem(
                     context: context,
@@ -53,48 +70,17 @@ class AppDrawer extends ConsumerWidget {
                     route: Routes.stopwatch,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.stopwatch),
-                    gradientColors: [AppColors.workoutRest, const Color(0xFF2980B9)],
+                    gradientColors: [
+                      AppColors.workoutRest,
+                      const Color(0xFF2980B9),
+                    ],
                   ),
                   const SizedBox(height: 20),
-                  _buildSectionLabel('KULLANICI'),
-                  const SizedBox(height: 8),
-                  _buildModernMenuItem(
-                    context: context,
-                    icon: Icons.person_outline_rounded,
-                    title: 'Profil',
-                    subtitle: 'Ki\u015fisel bilgiler',
-                    route: Routes.home,
-                    currentLocation: currentLocation,
-                    onTap: () => _navigate(context, Routes.home),
-                    gradientColors: [AppColors.secondary, const Color(0xFFE67E22)],
-                  ),
-                  _buildModernMenuItem(
-                    context: context,
-                    icon: Icons.insights_rounded,
-                    title: '\u0130lerleme',
-                    subtitle: 'Performans grafikleri',
-                    route: Routes.home,
-                    currentLocation: currentLocation,
-                    onTap: () => _navigate(context, Routes.home),
-                    gradientColors: [AppColors.accent, const Color(0xFF27AE60)],
-                  ),
-                  const SizedBox(height: 20),
-                  _buildSectionLabel('AYARLAR'),
-                  const SizedBox(height: 8),
-                  _buildModernMenuItem(
-                    context: context,
-                    icon: Icons.settings_outlined,
-                    title: 'Ayarlar',
-                    subtitle: 'Uygulama tercihleri',
-                    route: Routes.home,
-                    currentLocation: currentLocation,
-                    onTap: () => _navigate(context, Routes.home),
-                    gradientColors: [AppColors.darkHint, const Color(0xFF6C7A89)],
-                  ),
+                  _buildSectionLabel('TAEKWONDO'),
                 ],
               ),
             ),
-            _buildBottomActions(context),
+            //_buildBottomActions(context),
           ],
         ),
       ),
@@ -113,10 +99,7 @@ class AppDrawer extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.secondary,
-          ],
+          colors: [AppColors.primary, AppColors.secondary],
         ),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(24),
@@ -137,7 +120,11 @@ class AppDrawer extends ConsumerWidget {
                 child: const CircleAvatar(
                   radius: 28,
                   backgroundColor: Colors.white24,
-                  child: Icon(Icons.sports_gymnastics, size: 32, color: Colors.white),
+                  child: Icon(
+                    Icons.sports_gymnastics,
+                    size: 32,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -174,7 +161,11 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 child: Stack(
                   children: [
-                    const Icon(Icons.notifications_outlined, color: Colors.white, size: 22),
+                    const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                     Positioned(
                       right: 0,
                       top: 0,
@@ -201,7 +192,11 @@ class AppDrawer extends ConsumerWidget {
             ),
             child: const Row(
               children: [
-                Icon(Icons.local_fire_department, color: Colors.amber, size: 20),
+                Icon(
+                  Icons.local_fire_department,
+                  color: Colors.amber,
+                  size: 20,
+                ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -232,17 +227,37 @@ class AppDrawer extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(Icons.local_fire_department, '12', 'G\u00fcn', AppColors.primary),
+          _buildStatItem(
+            Icons.local_fire_department,
+            '12',
+            'G\u00fcn',
+            AppColors.primary,
+          ),
           _buildStatDivider(),
-          _buildStatItem(Icons.timer_outlined, '48', 'Saat', AppColors.secondary),
+          _buildStatItem(
+            Icons.timer_outlined,
+            '48',
+            'Saat',
+            AppColors.secondary,
+          ),
           _buildStatDivider(),
-          _buildStatItem(Icons.emoji_events_outlined, '5', 'Ba\u015far\u0131', AppColors.accent),
+          _buildStatItem(
+            Icons.emoji_events_outlined,
+            '5',
+            'Ba\u015far\u0131',
+            AppColors.accent,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(IconData icon, String value, String label, Color color) {
+  Widget _buildStatItem(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 22),
@@ -255,23 +270,13 @@ class AppDrawer extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.darkHint,
-            fontSize: 11,
-          ),
-        ),
+        Text(label, style: TextStyle(color: AppColors.darkHint, fontSize: 11)),
       ],
     );
   }
 
   Widget _buildStatDivider() {
-    return Container(
-      width: 1,
-      height: 40,
-      color: AppColors.darkDivider,
-    );
+    return Container(width: 1, height: 40, color: AppColors.darkDivider);
   }
 
   Widget _buildSectionLabel(String title) {
@@ -355,7 +360,9 @@ class AppDrawer extends ConsumerWidget {
                         style: TextStyle(
                           color: isActive ? Colors.white : AppColors.darkText,
                           fontSize: 14,
-                          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isActive
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -376,82 +383,6 @@ class AppDrawer extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomActions(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.darkSurface,
-        border: Border(
-          top: BorderSide(color: AppColors.darkDivider),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildActionButton(
-              icon: Icons.logout_rounded,
-              label: '\u00c7\u0131k\u0131\u015f',
-              color: AppColors.error,
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _buildActionButton(
-              icon: Icons.home_rounded,
-              label: 'Ana Sayfa',
-              color: AppColors.primary,
-              onTap: () {
-                Navigator.pop(context);
-                context.go(Routes.home);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
           ),
         ),
       ),

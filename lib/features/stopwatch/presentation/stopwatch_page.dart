@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairos/core/widgets/main_scaffold.dart';
 
 class StopwatchPage extends ConsumerStatefulWidget {
   const StopwatchPage({super.key});
@@ -11,6 +12,9 @@ class StopwatchPage extends ConsumerStatefulWidget {
 class _StopwatchPageState extends ConsumerState<StopwatchPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("Stopwatch Page")));
+    return MainScaffold(
+      appBar: AppBar(title: const Text("Kronometre")),
+      body: Center(child: Text("Stopwatch Page")),
+    );
   }
 }
