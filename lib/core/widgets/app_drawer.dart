@@ -3,106 +3,215 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kairos/core/router/app_router.dart';
+import 'package:kairos/core/theme/app_colors.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Mevcut route'u al
     final currentLocation = GoRouterState.of(context).matchedLocation;
 
     return Drawer(
-      child: Column(
-        children: [
-          // === DRAWER HEADER ===
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.blueAccent],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.darkBackground,
+              Color(0xFF0D0D0D),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            _buildSportyHeader(context),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                children: [
+                  _buildStatsCard(),
+                  const SizedBox(height: 16),
+                  _buildSectionLabel('ANTRENMAN'),
+                  const SizedBox(height: 8),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.fitness_center_rounded,
+                    title: 'Antrenmanlar\u0131m',
+                    subtitle: 'Haftal\u0131k program',
+                    route: Routes.home,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.home),
+                    gradientColors: [AppColors.workoutHigh, AppColors.workoutMedium],
+                  ),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.timer_outlined,
+                    title: 'Kronometre',
+                    subtitle: 'S\u00fcre takibi',
+                    route: Routes.stopwatch,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.stopwatch),
+                    gradientColors: [AppColors.workoutRest, const Color(0xFF2980B9)],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildSectionLabel('KULLANICI'),
+                  const SizedBox(height: 8),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.person_outline_rounded,
+                    title: 'Profil',
+                    subtitle: 'Ki\u015fisel bilgiler',
+                    route: Routes.home,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.home),
+                    gradientColors: [AppColors.secondary, const Color(0xFFE67E22)],
+                  ),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.insights_rounded,
+                    title: '\u0130lerleme',
+                    subtitle: 'Performans grafikleri',
+                    route: Routes.home,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.home),
+                    gradientColors: [AppColors.accent, const Color(0xFF27AE60)],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildSectionLabel('AYARLAR'),
+                  const SizedBox(height: 8),
+                  _buildModernMenuItem(
+                    context: context,
+                    icon: Icons.settings_outlined,
+                    title: 'Ayarlar',
+                    subtitle: 'Uygulama tercihleri',
+                    route: Routes.home,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.home),
+                    gradientColors: [AppColors.darkHint, const Color(0xFF6C7A89)],
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.blue),
+            _buildBottomActions(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSportyHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 20,
+        right: 20,
+        bottom: 20,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary,
+            AppColors.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Hoş Geldiniz',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: const CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white24,
+                  child: Icon(Icons.sports_gymnastics, size: 32, color: Colors.white),
                 ),
-                Text(
-                  'Antrenman Uygulaması',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sporcu',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Premium \u00dcye',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Stack(
+                  children: [
+                    const Icon(Icons.notifications_outlined, color: Colors.white, size: 22),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: AppColors.accent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-          // === MENÜ ÖĞELERİ ===
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                // === GENEL ===
-                _buildSectionTitle(context, 'GENEL'),
-
-                // Ana Sayfa
-                _buildDrawerItem(
-                  context: context,
-                  icon: Icons.home,
-                  title: 'Ana Sayfa',
-                  route: Routes.home,
-                  currentLocation: currentLocation,
-                  onTap: () => _navigate(context, Routes.home),
-                ),
-
-                const Divider(),
-
-                // === HESAP ===
-                _buildSectionTitle(context, 'HESAP'),
-
-                const Divider(),
-
-                // === DİĞER ===
-                _buildSectionTitle(context, 'DİĞER'),
-              ],
-            ),
-          ),
-
-          // === ALT KISIM ===
+          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey[300]!)),
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: const Row(
               children: [
-                Text(
-                  'Versiyon 1.0.0',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // Drawer'ı kapat
-                    Navigator.pop(context);
-                    // Ana sayfaya git
-                    context.go(Routes.home);
-                  },
-                  icon: const Icon(Icons.home, color: Colors.blue),
-                  tooltip: 'Ana Sayfa',
+                Icon(Icons.local_fire_department, color: Colors.amber, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '"Durdurulamayan bir g\u00fcc varsa, o da kararl\u0131l\u0131kt\u0131r."',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -112,77 +221,245 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildStatsCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.darkSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.darkDivider),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem(Icons.local_fire_department, '12', 'G\u00fcn', AppColors.primary),
+          _buildStatDivider(),
+          _buildStatItem(Icons.timer_outlined, '48', 'Saat', AppColors.secondary),
+          _buildStatDivider(),
+          _buildStatItem(Icons.emoji_events_outlined, '5', 'Ba\u015far\u0131', AppColors.accent),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(IconData icon, String value, String label, Color color) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 22),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: AppColors.darkHint,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatDivider() {
+    return Container(
+      width: 1,
+      height: 40,
+      color: AppColors.darkDivider,
+    );
+  }
+
+  Widget _buildSectionLabel(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, top: 12, bottom: 4),
+      padding: const EdgeInsets.only(left: 4),
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+          color: AppColors.darkHint,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.5,
         ),
       ),
     );
   }
 
-  Widget _buildDrawerItem({
+  Widget _buildModernMenuItem({
     required BuildContext context,
     required IconData icon,
     required String title,
+    required String subtitle,
     required String route,
     required String currentLocation,
     required VoidCallback onTap,
-    String? badge,
+    required List<Color> gradientColors,
   }) {
-    // Aktif route'u kontrol et
     final isActive =
         currentLocation == route ||
         (route != '/' && currentLocation.startsWith(route));
 
-    return ListTile(
-      leading: Icon(icon, color: isActive ? Colors.blue : null),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-          color: isActive ? Colors.blue : null,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? gradientColors.first.withValues(alpha: 0.15)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(14),
+              border: isActive
+                  ? Border.all(
+                      color: gradientColors.first.withValues(alpha: 0.3),
+                      width: 1,
+                    )
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: isActive
+                          ? gradientColors
+                          : [AppColors.darkCard, AppColors.darkCard],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isActive ? Colors.white : AppColors.darkHint,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: isActive ? Colors.white : AppColors.darkText,
+                          fontSize: 14,
+                          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: AppColors.darkHint,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: isActive ? gradientColors.first : AppColors.darkHint,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      trailing: badge != null
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                badge,
-                style: const TextStyle(
-                  color: Colors.white,
+    );
+  }
+
+  Widget _buildBottomActions(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.darkSurface,
+        border: Border(
+          top: BorderSide(color: AppColors.darkDivider),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildActionButton(
+              icon: Icons.logout_rounded,
+              label: '\u00c7\u0131k\u0131\u015f',
+              color: AppColors.error,
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildActionButton(
+              icon: Icons.home_rounded,
+              label: 'Ana Sayfa',
+              color: AppColors.primary,
+              onTap: () {
+                Navigator.pop(context);
+                context.go(Routes.home);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            )
-          : (isActive
-                ? Container(
-                    width: 4,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  )
-                : null),
-      onTap: onTap,
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   void _navigate(BuildContext context, String route) {
-    // Drawer'ı kapat
     Navigator.pop(context);
-    // GoRouter ile navigasyon
     context.go(route);
   }
 }
