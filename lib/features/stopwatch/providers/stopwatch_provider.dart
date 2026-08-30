@@ -1,138 +1,142 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/legacy.dart';
 
+class LapData {
+  final int lapNumber;
+  final int totalMilliseconds;
+  final int lapMilliseconds;
+
+  LapData({
+    required this.lapNumber,
+    required this.totalMilliseconds,
+    required this.lapMilliseconds,
+  });
+
+  String get formattedTotal {
+    return _formatTime(totalMilliseconds);
+  }
+
+  String get formattedLap {
+    return _formatTime(lapMilliseconds);
+  }
+
+  static String _formatTime(int ms) {
+    final totalSeconds = ms ~/ 1000;
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    final milliseconds = ((ms % 1000) ~/ 10).toString().padLeft(2, '0');
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.$milliseconds';
+  }
+}
+
 class StopWatchState {
-  final int seconds;
+  final int milliseconds;
   final bool isRunning;
   final bool isPaused;
   final String displayTime;
+  final List<LapData> laps;
 
   StopWatchState({
-    required this.seconds,
+    required this.milliseconds,
     required this.isRunning,
     required this.isPaused,
     required this.displayTime,
+    required this.laps,
   });
 
-  //Başlangıç Durumu
   factory StopWatchState.initial() {
     return StopWatchState(
-      seconds: 0,
+      milliseconds: 0,
       isRunning: false,
       isPaused: false,
-      displayTime: '00:00',
+      displayTime: '00:00.00',
+      laps: [],
     );
   }
 
-  //State'i güncellemek için copyWith metodu
   StopWatchState copyWith({
-    int? seconds,
+    int? milliseconds,
     bool? isRunning,
     bool? isPaused,
     String? displayTime,
+    List<LapData>? laps,
   }) {
     return StopWatchState(
-      seconds: seconds ?? this.seconds,
+      milliseconds: milliseconds ?? this.milliseconds,
       isRunning: isRunning ?? this.isRunning,
       isPaused: isPaused ?? this.isPaused,
       displayTime: displayTime ?? this.displayTime,
+      laps: laps ?? this.laps,
     );
   }
 
-  //displayTime'ı otomatik hesapla
-  String _formatTime(int totalSeconds) {
-    final minuets = totalSeconds ~/ 60;
-    final remainingSeconds = totalSeconds % 60;
-    return '${minuets.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  static String formatTime(int ms) {
+    final totalSeconds = ms ~/ 1000;
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    final milliseconds = ((ms % 1000) ~/ 10).toString().padLeft(2, '0');
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.$milliseconds';
   }
 
-  // Yeni state oluştururken
-  StopWatchState updateWithSeconds(int newSeconds) {
+  StopWatchState updateWithMs(int newMs) {
     return copyWith(
-      seconds: newSeconds,
-      isRunning: isRunning,
-      isPaused: isPaused,
-      displayTime: _formatTime(newSeconds),
+      milliseconds: newMs,
+      displayTime: formatTime(newMs),
     );
   }
 }
 
-// notifier (iş mantığı)
-
 class StopWatchNotifier extends StateNotifier<StopWatchState> {
   Timer? _timer;
+  int _lastLapMs = 0;
 
   StopWatchNotifier() : super(StopWatchState.initial());
 
-  // ====== timer'ı başlat ======
   void startTimer() {
-    //zaten çalışıyorsa duraklat
     if (state.isRunning || state.isPaused) return;
-
-    //timer'ı başlat
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // her saniye state'i güncelle
-      final newSeconds = state.seconds + 1;
-      state = state.updateWithSeconds(newSeconds);
+    _lastLapMs = 0;
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      final newMs = state.milliseconds + 10;
+      state = state.updateWithMs(newMs);
     });
-
-    // State'i güncelle
     state = state.copyWith(isRunning: true, isPaused: false);
   }
 
-  // ===== Timer'ı Durdur =====
-  void stopTimer() {
-    // Çalışmıyorsa işlem yapma
-    if (!state.isRunning) return;
-
-    // Timer'ı iptal et
-    _timer?.cancel();
-    _timer = null;
-
-    // State'i güncelle
-    state = state.copyWith(isRunning: false, isPaused: false);
-  }
-
-  // ===== Timer'ı Duraklat =====
   void pauseTimer() {
-    // Çalışmıyorsa veya zaten duraklatılmışsa işlem yapma
     if (!state.isRunning || state.isPaused) return;
-
-    // Timer'ı iptal et
     _timer?.cancel();
     _timer = null;
-
-    // State'i güncelle
     state = state.copyWith(isPaused: true);
   }
 
-  // ===== Timer'ı Devam Ettir =====
   void resumeTimer() {
-    // Çalışmıyorsa veya duraklatılmamışsa işlem yapma
     if (!state.isRunning || !state.isPaused) return;
-
-    // Timer'ı yeniden başlat
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final newSeconds = state.seconds + 1;
-      state = state.updateWithSeconds(newSeconds);
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      final newMs = state.milliseconds + 10;
+      state = state.updateWithMs(newMs);
     });
-
-    // State'i güncelle
     state = state.copyWith(isPaused: false);
   }
 
-  // ===== Timer'ı Sıfırla =====
   void resetTimer() {
-    // Timer'ı durdur
     _timer?.cancel();
     _timer = null;
-
-    // State'i sıfırla
+    _lastLapMs = 0;
     state = StopWatchState.initial();
   }
 
-  // ===== Temizlik =====
+  void addLap() {
+    if (!state.isRunning) return;
+    final lapTime = state.milliseconds - _lastLapMs;
+    final lap = LapData(
+      lapNumber: state.laps.length + 1,
+      totalMilliseconds: state.milliseconds,
+      lapMilliseconds: lapTime,
+    );
+    _lastLapMs = state.milliseconds;
+    state = state.copyWith(laps: [...state.laps, lap]);
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -141,7 +145,6 @@ class StopWatchNotifier extends StateNotifier<StopWatchState> {
   }
 }
 
-// ============ PROVIDER ============
 final timerProvider = StateNotifierProvider<StopWatchNotifier, StopWatchState>((
   ref,
 ) {
