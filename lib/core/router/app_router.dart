@@ -4,14 +4,17 @@ import 'package:kairos/features/dashboard/presentation/dashboard_page.dart';
 import 'package:kairos/features/stopwatch/presentation/stopwatch_page.dart';
 import 'package:kairos/features/training_plans/presentation/training_plan_detail.dart';
 import 'package:kairos/features/training_plans/presentation/training_plans.dart';
+import 'package:kairos/features/training_schedule/presentation/training_schedule.dart';
 
 class Routes {
   static const String stopwatch = '/stopwatch';
   static const String trainingPlans = '/training-plans';
   static const String dashboard = '/dashboard';
   static const String trainingPlanDetail = '/training-plan-detail';
+  static const String trainingSchedule = '/training-schedule';
 
-  static String trainingPlanDetailWithId(String id) => '/training-plan-detail/$id';
+  static String trainingPlanDetailWithId(String id) =>
+      '/training-plan-detail/$id';
 }
 
 final appRouterProvider = StateProvider<GoRouter>(
@@ -40,6 +43,11 @@ final appRouterProvider = StateProvider<GoRouter>(
           final planId = state.pathParameters['id']!;
           return TrainingPlanDetail(planId: planId);
         },
+      ),
+      GoRoute(
+        path: Routes.trainingSchedule,
+        name: 'training-schedule',
+        builder: (context, state) => const TrainingSchedule(),
       ),
     ],
   ),

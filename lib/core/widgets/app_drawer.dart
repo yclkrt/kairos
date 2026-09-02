@@ -51,6 +51,19 @@ class AppDrawer extends ConsumerWidget {
                   const SizedBox(height: 8),
                   _buildModernMenuItem(
                     context: context,
+                    icon: Icons.calendar_month,
+                    title: 'Antrenman Takvimi',
+                    subtitle: '',
+                    route: Routes.trainingSchedule,
+                    currentLocation: currentLocation,
+                    onTap: () => _navigate(context, Routes.trainingSchedule),
+                    gradientColors: [
+                      AppColors.workoutHigh,
+                      AppColors.workoutMedium,
+                    ],
+                  ),
+                  _buildModernMenuItem(
+                    context: context,
                     icon: Icons.fitness_center_rounded,
                     title: 'Antrenmanlar\u0131m',
                     subtitle: 'Haftal\u0131k program',
