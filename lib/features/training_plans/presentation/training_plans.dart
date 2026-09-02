@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kairos/core/router/app_router.dart';
 import 'package:kairos/core/theme/app_colors.dart';
 import 'package:kairos/core/widgets/main_scaffold.dart';
 import 'package:kairos/features/training_plans/model/training_plan.dart';
 import 'package:kairos/features/training_plans/providers/training_plans_provider.dart';
 
-// ===== MAIN PAGE =====
 class TrainingPlans extends ConsumerStatefulWidget {
   const TrainingPlans({super.key});
 
@@ -191,7 +192,7 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {},
+          onTap: () => context.go(Routes.trainingPlanDetailWithId(plan.id)),
           child: Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
