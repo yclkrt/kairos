@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
 import 'package:kairos/core/widgets/main_scaffold.dart';
 import 'package:kairos/features/stopwatch/providers/stopwatch_provider.dart';
 import 'package:kairos/features/stopwatch/widgets/stopwatch_buttons.dart';
