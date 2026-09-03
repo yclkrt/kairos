@@ -22,6 +22,7 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
 
     return MainScaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.lightBackground,
         title: const Text(
           "ANTRENMAN PLANLARI",
           style: TextStyle(

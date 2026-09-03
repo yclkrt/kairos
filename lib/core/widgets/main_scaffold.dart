@@ -1,6 +1,7 @@
 // lib/core/widgets/main_scaffold.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairos/core/theme/app_colors.dart';
 import 'app_drawer.dart';
 
 class MainScaffold extends ConsumerWidget {
@@ -22,6 +23,7 @@ class MainScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: AppColors.lightBackground,
       appBar: appBar,
       drawer: const AppDrawer(), // Drawer merkezi olarak burada
       body: body,
