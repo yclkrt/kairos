@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kairos/core/providers/theme_provider.dart';
 import 'package:kairos/core/router/app_router.dart';
 import 'package:kairos/core/theme/app_colors.dart';
 
@@ -31,6 +32,7 @@ class AppDrawer extends ConsumerWidget {
                   vertical: 8,
                 ),
                 children: [
+                  _buildThemeSwitch(context, ref),
                   _buildStatsCard(),
                   const SizedBox(height: 16),
                   _buildModernMenuItem(
@@ -397,6 +399,81 @@ class AppDrawer extends ConsumerWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeSwitch(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [const Color(0xFF9C27B0), const Color(0xFF673AB7)]
+                      : [const Color(0xFFFFB74D), const Color(0xFFFF9800)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TEMA',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isDark ? 'Koyu Tema' : 'Açık Tema',
+                    style: TextStyle(
+                      color: AppColors.darkHint,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Switch(
+              value: isDark,
+              onChanged: (_) => ref.read(themeProvider.notifier).toggleTheme(),
+              activeThumbColor: AppColors.workoutHigh,
+              activeTrackColor: AppColors.workoutHigh.withValues(alpha: 0.3),
+              inactiveThumbColor: const Color(0xFFFFB74D),
+              inactiveTrackColor: const Color(0xFFFFB74D).withValues(alpha: 0.3),
+            ),
+          ],
         ),
       ),
     );

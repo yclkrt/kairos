@@ -22,17 +22,22 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     final allRemindersAsync = ref.watch(allRemindersProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF2D2D2D), Color(0xFF1A1A1A)],
+          colors: isDark
+              ? [const Color(0xFF2D2D2D), const Color(0xFF1A1A1A)]
+              : [Colors.white, const Color(0xFFF5F5F5)],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.workoutHigh.withValues(alpha: 0.3),
+            color: isDark
+                ? AppColors.workoutHigh.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -54,11 +59,12 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white.withValues(alpha: 0.05),
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,11 +78,11 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             children: [
               Text(
                 _getMonthYearString(_currentMonth).toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 3,
-                  color: Colors.white,
+                  color: isDark ? Colors.white : AppColors.lightText,
                 ),
               ),
               const SizedBox(height: 2),
@@ -103,6 +109,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 
   Widget _buildNavButton(IconData icon, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -115,14 +122,19 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.workoutHigh.withValues(alpha: 0.2),
-                AppColors.workoutMedium.withValues(alpha: 0.1),
-              ],
+              colors: isDark
+                  ? [
+                      AppColors.workoutHigh.withValues(alpha: 0.2),
+                      AppColors.workoutMedium.withValues(alpha: 0.1),
+                    ]
+                  : [
+                      AppColors.workoutHigh.withValues(alpha: 0.1),
+                      AppColors.workoutMedium.withValues(alpha: 0.05),
+                    ],
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppColors.workoutHigh.withValues(alpha: 0.3),
+              color: AppColors.workoutHigh.withValues(alpha: isDark ? 0.3 : 0.2),
               width: 1,
             ),
           ),
@@ -133,6 +145,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 
   Widget _buildWeekdayLabels() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const weekdays = ['PZT', 'SAL', 'CAR', 'PER', 'CUM', 'CMT', 'PAZ'];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -151,7 +164,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   letterSpacing: 1,
                   color: isWeekend
                       ? AppColors.workoutHigh.withValues(alpha: 0.7)
-                      : AppColors.darkHint,
+                      : (isDark ? AppColors.darkHint : AppColors.lightHint),
                 ),
               ),
             ),
@@ -169,6 +182,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   bool _isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
   Widget _buildCalendarGrid(AsyncValue<List<dynamic>> allRemindersAsync) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
     final lastDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
     final startWeekday = firstDayOfMonth.weekday;
@@ -210,10 +224,15 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                     )
                   : isToday
                       ? LinearGradient(
-                          colors: [
-                            AppColors.workoutHigh.withValues(alpha: 0.15),
-                            AppColors.workoutMedium.withValues(alpha: 0.1),
-                          ],
+                          colors: isDark
+                              ? [
+                                  AppColors.workoutHigh.withValues(alpha: 0.15),
+                                  AppColors.workoutMedium.withValues(alpha: 0.1),
+                                ]
+                              : [
+                                  AppColors.workoutHigh.withValues(alpha: 0.1),
+                                  AppColors.workoutMedium.withValues(alpha: 0.05),
+                                ],
                         )
                       : null,
               borderRadius: BorderRadius.circular(14),
@@ -247,8 +266,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                         : isToday
                             ? AppColors.workoutHigh
                             : isWeekend
-                                ? AppColors.darkHint.withValues(alpha: 0.6)
-                                : AppColors.darkText,
+                                ? (isDark ? AppColors.darkHint.withValues(alpha: 0.6) : AppColors.lightHint.withValues(alpha: 0.6))
+                                : (isDark ? AppColors.darkText : AppColors.lightText),
                   ),
                 ),
                 if (hasReminder)

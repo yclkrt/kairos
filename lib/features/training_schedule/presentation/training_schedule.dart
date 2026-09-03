@@ -16,10 +16,23 @@ class TrainingSchedule extends ConsumerStatefulWidget {
 class _TrainingScheduleState extends ConsumerState<TrainingSchedule> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return MainScaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [const Color(0xFF2D2D2D), const Color(0xFF1A1A1A)]
+                  : [AppColors.primary, AppColors.secondary],
+            ),
+          ),
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -44,17 +57,20 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule> {
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
                 fontSize: 16,
+                color: Colors.white,
               ),
             ),
           ],
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFF8F9FA), Color(0xFFE8E8E8)],
+            colors: isDark
+                ? [const Color(0xFF0A0A0A), const Color(0xFF1A1A1A)]
+                : [const Color(0xFFF8F9FA), const Color(0xFFE8E8E8)],
           ),
         ),
         child: SingleChildScrollView(
