@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kairos/core/router/app_router.dart';
 import 'package:kairos/core/theme/app_colors.dart';
+import 'package:kairos/core/theme/app_gradients.dart';
 import 'package:kairos/core/widgets/main_scaffold.dart';
 import 'package:kairos/features/training_plans/model/training_plan.dart';
 import 'package:kairos/features/training_plans/providers/training_plans_provider.dart';
@@ -22,14 +23,28 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
 
     return MainScaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.lightBackground,
-        title: const Text(
-          "ANTRENMAN PLANLARI",
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 2,
-            fontSize: 16,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDark
+                ? AppGradients.trainingPlansDark
+                : AppGradients.trainingPlans,
           ),
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'ANTRENMAN PLANLARI',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
         actions: [
           Container(

@@ -36,21 +36,6 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.workoutHigh, AppColors.workoutMedium],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(
-                Icons.calendar_month_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
             const Text(
               'ANTRENMAN TAKVIMI',
               style: TextStyle(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kairos/core/theme/app_gradients.dart';
 import 'package:kairos/core/widgets/main_scaffold.dart';
 import 'package:kairos/features/stopwatch/providers/stopwatch_provider.dart';
 import 'package:kairos/features/stopwatch/widgets/stopwatch_buttons.dart';
@@ -38,16 +39,29 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
 
     return MainScaffold(
       appBar: AppBar(
-        title: const Text(
-          'KRONOMETRE',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 3,
-            fontSize: 16,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDark
+                ? AppGradients.stopwatchDark
+                : AppGradients.stopwatch,
           ),
         ),
-        backgroundColor: Color(0xFFF0F0F0),
-        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'KRONOMETRE',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                letterSpacing: 3,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
         actions: [
           // Tur sayisi gosterimi
           if (timerState.laps.isNotEmpty)

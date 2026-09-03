@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kairos/core/providers/theme_provider.dart';
 import 'package:kairos/core/router/app_router.dart';
 import 'package:kairos/core/theme/app_colors.dart';
+import 'package:kairos/core/theme/app_gradients.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
@@ -43,10 +44,7 @@ class AppDrawer extends ConsumerWidget {
                     route: Routes.dashboard,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.dashboard),
-                    gradientColors: [
-                      AppColors.workoutHigh,
-                      AppColors.workoutMedium,
-                    ],
+                    gradientColors: AppGradients.dashboardIcon,
                   ),
                   const SizedBox(height: 16),
                   _buildSectionLabel('ANTRENMAN'),
@@ -59,10 +57,7 @@ class AppDrawer extends ConsumerWidget {
                     route: Routes.trainingSchedule,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingSchedule),
-                    gradientColors: [
-                      AppColors.workoutHigh,
-                      AppColors.workoutMedium,
-                    ],
+                    gradientColors: AppGradients.trainingScheduleIcon,
                   ),
                   _buildModernMenuItem(
                     context: context,
@@ -72,10 +67,7 @@ class AppDrawer extends ConsumerWidget {
                     route: Routes.trainingPlans,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingPlans),
-                    gradientColors: [
-                      AppColors.workoutHigh,
-                      AppColors.workoutMedium,
-                    ],
+                    gradientColors: AppGradients.trainingPlansIcon,
                   ),
                   _buildModernMenuItem(
                     context: context,
@@ -85,10 +77,7 @@ class AppDrawer extends ConsumerWidget {
                     route: Routes.stopwatch,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.stopwatch),
-                    gradientColors: [
-                      AppColors.workoutRest,
-                      const Color(0xFF2980B9),
-                    ],
+                    gradientColors: AppGradients.stopwatchIcon,
                   ),
                   const SizedBox(height: 20),
                   _buildSectionLabel('TAEKWONDO'),
