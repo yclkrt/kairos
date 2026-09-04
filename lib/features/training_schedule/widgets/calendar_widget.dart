@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kairos/core/theme/app_colors.dart';
 import 'package:kairos/features/training_schedule/providers/reminder_provider.dart';
 
+enum CalendarViewMode { monthly, yearly }
+
 class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({super.key});
 
@@ -12,11 +14,47 @@ class CalendarWidget extends ConsumerStatefulWidget {
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   late DateTime _currentMonth;
+  late int _currentYear;
+  CalendarViewMode _viewMode = CalendarViewMode.monthly;
 
   @override
   void initState() {
     super.initState();
     _currentMonth = DateTime.now();
+    _currentYear = DateTime.now().year;
+  }
+
+  void _goToPreviousMonth() {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+    });
+  }
+
+  void _goToNextMonth() {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+    });
+  }
+
+  void _goToPreviousYear() {
+    setState(() {
+      _currentYear--;
+      _currentMonth = DateTime(_currentYear, _currentMonth.month);
+    });
+  }
+
+  void _goToNextYear() {
+    setState(() {
+      _currentYear++;
+      _currentMonth = DateTime(_currentYear, _currentMonth.month);
+    });
+  }
+
+  void _switchToMonthView(DateTime month) {
+    setState(() {
+      _currentMonth = month;
+      _viewMode = CalendarViewMode.monthly;
+    });
   }
 
   @override
@@ -49,9 +87,13 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           children: [
             _buildHeader(),
             const SizedBox(height: 20),
-            _buildWeekdayLabels(),
-            const SizedBox(height: 12),
-            _buildCalendarGrid(allRemindersAsync),
+            if (_viewMode == CalendarViewMode.monthly) ...[
+              _buildWeekdayLabels(),
+              const SizedBox(height: 12),
+              _buildCalendarGrid(allRemindersAsync),
+            ] else ...[
+              _buildYearGrid(allRemindersAsync),
+            ],
           ],
         ),
       ),
@@ -69,20 +111,30 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildNavButton(Icons.chevron_left_rounded, () {
-            setState(() {
-              _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
-            });
-          }),
+          _buildNavButton(
+            Icons.chevron_left_rounded,
+            _viewMode == CalendarViewMode.monthly ? _goToPreviousMonth : _goToPreviousYear,
+          ),
           Column(
             children: [
-              Text(
-                _getMonthYearString(_currentMonth).toUpperCase(),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3,
-                  color: isDark ? Colors.white : AppColors.lightText,
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _viewMode = _viewMode == CalendarViewMode.monthly
+                        ? CalendarViewMode.yearly
+                        : CalendarViewMode.monthly;
+                  });
+                },
+                child: Text(
+                  _viewMode == CalendarViewMode.monthly
+                      ? _getMonthYearString(_currentMonth).toUpperCase()
+                      : _currentYear.toString(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 3,
+                    color: isDark ? Colors.white : AppColors.lightText,
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
@@ -98,11 +150,10 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               ),
             ],
           ),
-          _buildNavButton(Icons.chevron_right_rounded, () {
-            setState(() {
-              _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
-            });
-          }),
+          _buildNavButton(
+            Icons.chevron_right_rounded,
+            _viewMode == CalendarViewMode.monthly ? _goToNextMonth : _goToNextYear,
+          ),
         ],
       ),
     );
@@ -177,6 +228,123 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   String _getMonthYearString(DateTime date) {
     const months = ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
     return '${months[date.month - 1]} ${date.year}';
+  }
+
+  String _getMonthName(int month) {
+    const months = ['Oca', 'Sub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Agu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    return months[month - 1];
+  }
+
+  Widget _buildYearGrid(AsyncValue<List<dynamic>> allRemindersAsync) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final reminderDates = allRemindersAsync.when(
+      data: (reminders) => reminders.map((r) => r.date).toList(),
+      loading: () => <DateTime>[],
+      error: (_, _) => <DateTime>[],
+    );
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.2,
+      ),
+      itemCount: 12,
+      itemBuilder: (context, index) {
+        final month = index + 1;
+        final monthDate = DateTime(_currentYear, month);
+        final now = DateTime.now();
+        final isCurrentMonth = now.year == _currentYear && now.month == month;
+        final reminderCount = reminderDates.where((d) => d.year == _currentYear && d.month == month).length;
+
+        return GestureDetector(
+          onTap: () => _switchToMonthView(monthDate),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              gradient: isCurrentMonth
+                  ? const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.workoutHigh, AppColors.workoutMedium],
+                    )
+                  : LinearGradient(
+                      colors: isDark
+                          ? [
+                              AppColors.darkCard.withValues(alpha: 0.5),
+                              AppColors.darkCard.withValues(alpha: 0.3),
+                            ]
+                          : [
+                              Colors.white,
+                              const Color(0xFFF5F5F5),
+                            ],
+                    ),
+              borderRadius: BorderRadius.circular(16),
+              border: isCurrentMonth
+                  ? null
+                  : Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.black.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+              boxShadow: isCurrentMonth
+                  ? [
+                      BoxShadow(
+                        color: AppColors.workoutHigh.withValues(alpha: 0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _getMonthName(month),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isCurrentMonth ? FontWeight.w800 : FontWeight.w600,
+                    color: isCurrentMonth
+                        ? Colors.white
+                        : isDark
+                            ? AppColors.darkText
+                            : AppColors.lightText,
+                  ),
+                ),
+                if (reminderCount > 0) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isCurrentMonth
+                            ? [Colors.white.withValues(alpha: 0.3), Colors.white.withValues(alpha: 0.2)]
+                            : [AppColors.accent, AppColors.workoutLow],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '$reminderCount',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isCurrentMonth ? Colors.white : Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   bool _isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
