@@ -58,7 +58,7 @@ class AppDrawer extends ConsumerWidget {
                     context: context,
                     icon: Icons.calendar_month,
                     title: 'Antrenman Takvimi',
-                    subtitle: '',
+                    subtitle: 'Takvim ve Hatırlatıcılar',
                     route: Routes.trainingSchedule,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingSchedule),
@@ -69,7 +69,7 @@ class AppDrawer extends ConsumerWidget {
                     context: context,
                     icon: Icons.fitness_center_rounded,
                     title: 'Antrenmanlarım',
-                    subtitle: 'Haftalık program',
+                    subtitle: 'Seanslık programlar',
                     route: Routes.trainingPlans,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingPlans),
@@ -234,7 +234,9 @@ class AppDrawer extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? AppColors.darkDivider : AppColors.lightDivider),
+        border: Border.all(
+          color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -286,13 +288,23 @@ class AppDrawer extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(label, style: TextStyle(color: isDark ? AppColors.darkHint : AppColors.lightHint, fontSize: 11)),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDark ? AppColors.darkHint : AppColors.lightHint,
+            fontSize: 11,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildStatDivider(bool isDark) {
-    return Container(width: 1, height: 40, color: isDark ? AppColors.darkDivider : AppColors.lightDivider);
+    return Container(
+      width: 1,
+      height: 40,
+      color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+    );
   }
 
   Widget _buildSectionLabel(String title, bool isDark) {
@@ -357,13 +369,18 @@ class AppDrawer extends ConsumerWidget {
                       end: Alignment.bottomRight,
                       colors: isActive
                           ? gradientColors
-                          : [isDark ? AppColors.darkCard : AppColors.lightCard, isDark ? AppColors.darkCard : AppColors.lightCard],
+                          : [
+                              isDark ? AppColors.darkCard : AppColors.lightCard,
+                              isDark ? AppColors.darkCard : AppColors.lightCard,
+                            ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
-                    color: isActive ? Colors.white : (isDark ? AppColors.darkHint : AppColors.lightHint),
+                    color: isActive
+                        ? Colors.white
+                        : (isDark ? AppColors.darkHint : AppColors.lightHint),
                     size: 20,
                   ),
                 ),
@@ -377,7 +394,9 @@ class AppDrawer extends ConsumerWidget {
                         style: TextStyle(
                           color: isActive
                               ? (isDark ? Colors.white : AppColors.lightText)
-                              : (isDark ? AppColors.darkText : AppColors.lightText),
+                              : (isDark
+                                    ? AppColors.darkText
+                                    : AppColors.lightText),
                           fontSize: 14,
                           fontWeight: isActive
                               ? FontWeight.w600
@@ -388,7 +407,9 @@ class AppDrawer extends ConsumerWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: isDark ? AppColors.darkHint : AppColors.lightHint,
+                          color: isDark
+                              ? AppColors.darkHint
+                              : AppColors.lightHint,
                           fontSize: 11,
                         ),
                       ),
@@ -397,7 +418,9 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isActive ? gradientColors.first : (isDark ? AppColors.darkHint : AppColors.lightHint),
+                  color: isActive
+                      ? gradientColors.first
+                      : (isDark ? AppColors.darkHint : AppColors.lightHint),
                   size: 20,
                 ),
               ],
@@ -414,10 +437,14 @@ class AppDrawer extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -472,7 +499,9 @@ class AppDrawer extends ConsumerWidget {
               activeThumbColor: AppColors.workoutHigh,
               activeTrackColor: AppColors.workoutHigh.withValues(alpha: 0.3),
               inactiveThumbColor: const Color(0xFFFFB74D),
-              inactiveTrackColor: const Color(0xFFFFB74D).withValues(alpha: 0.3),
+              inactiveTrackColor: const Color(
+                0xFFFFB74D,
+              ).withValues(alpha: 0.3),
             ),
           ],
         ),
