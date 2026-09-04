@@ -13,19 +13,23 @@ class AppDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocation = GoRouterState.of(context).matchedLocation;
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
 
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.darkBackground, Color(0xFF0D0D0D)],
+            colors: isDark
+                ? [AppColors.darkBackground, Color(0xFF0D0D0D)]
+                : [AppColors.lightBackground, Color(0xFFE8E8E8)],
           ),
         ),
         child: Column(
           children: [
-            _buildSportyHeader(context),
+            _buildSportyHeader(context, isDark),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(
@@ -33,8 +37,8 @@ class AppDrawer extends ConsumerWidget {
                   vertical: 8,
                 ),
                 children: [
-                  _buildThemeSwitch(context, ref),
-                  _buildStatsCard(),
+                  _buildThemeSwitch(context, ref, isDark),
+                  _buildStatsCard(isDark),
                   const SizedBox(height: 16),
                   _buildModernMenuItem(
                     context: context,
@@ -45,9 +49,10 @@ class AppDrawer extends ConsumerWidget {
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.dashboard),
                     gradientColors: AppGradients.dashboardIcon,
+                    isDark: isDark,
                   ),
                   const SizedBox(height: 16),
-                  _buildSectionLabel('ANTRENMAN'),
+                  _buildSectionLabel('ANTRENMAN', isDark),
                   const SizedBox(height: 8),
                   _buildModernMenuItem(
                     context: context,
@@ -58,29 +63,32 @@ class AppDrawer extends ConsumerWidget {
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingSchedule),
                     gradientColors: AppGradients.trainingScheduleIcon,
+                    isDark: isDark,
                   ),
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.fitness_center_rounded,
-                    title: 'Antrenmanlar\u0131m',
-                    subtitle: 'Haftal\u0131k program',
+                    title: 'Antrenmanlarım',
+                    subtitle: 'Haftalık program',
                     route: Routes.trainingPlans,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingPlans),
                     gradientColors: AppGradients.trainingPlansIcon,
+                    isDark: isDark,
                   ),
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.timer_outlined,
                     title: 'Kronometre',
-                    subtitle: 'S\u00fcre takibi',
+                    subtitle: 'Süre takibi',
                     route: Routes.stopwatch,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.stopwatch),
                     gradientColors: AppGradients.stopwatchIcon,
+                    isDark: isDark,
                   ),
                   const SizedBox(height: 20),
-                  _buildSectionLabel('TAEKWONDO'),
+                  _buildSectionLabel('TAEKWONDO', isDark),
                 ],
               ),
             ),
@@ -91,7 +99,7 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildSportyHeader(BuildContext context) {
+  Widget _buildSportyHeader(BuildContext context, bool isDark) {
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
@@ -220,13 +228,13 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsCard() {
+  Widget _buildStatsCard(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkDivider),
+        border: Border.all(color: isDark ? AppColors.darkDivider : AppColors.lightDivider),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -234,22 +242,25 @@ class AppDrawer extends ConsumerWidget {
           _buildStatItem(
             Icons.local_fire_department,
             '12',
-            'G\u00fcn',
+            'Gün',
             AppColors.primary,
+            isDark,
           ),
-          _buildStatDivider(),
+          _buildStatDivider(isDark),
           _buildStatItem(
             Icons.timer_outlined,
             '48',
             'Saat',
             AppColors.secondary,
+            isDark,
           ),
-          _buildStatDivider(),
+          _buildStatDivider(isDark),
           _buildStatItem(
             Icons.emoji_events_outlined,
             '5',
-            'Ba\u015far\u0131',
+            'Başarı',
             AppColors.accent,
+            isDark,
           ),
         ],
       ),
@@ -261,6 +272,7 @@ class AppDrawer extends ConsumerWidget {
     String value,
     String label,
     Color color,
+    bool isDark,
   ) {
     return Column(
       children: [
@@ -269,27 +281,27 @@ class AppDrawer extends ConsumerWidget {
         Text(
           value,
           style: TextStyle(
-            color: Colors.white,
+            color: isDark ? Colors.white : AppColors.lightText,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(label, style: TextStyle(color: AppColors.darkHint, fontSize: 11)),
+        Text(label, style: TextStyle(color: isDark ? AppColors.darkHint : AppColors.lightHint, fontSize: 11)),
       ],
     );
   }
 
-  Widget _buildStatDivider() {
-    return Container(width: 1, height: 40, color: AppColors.darkDivider);
+  Widget _buildStatDivider(bool isDark) {
+    return Container(width: 1, height: 40, color: isDark ? AppColors.darkDivider : AppColors.lightDivider);
   }
 
-  Widget _buildSectionLabel(String title) {
+  Widget _buildSectionLabel(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         title,
         style: TextStyle(
-          color: AppColors.darkHint,
+          color: isDark ? AppColors.darkHint : AppColors.lightHint,
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.5,
@@ -307,6 +319,7 @@ class AppDrawer extends ConsumerWidget {
     required String currentLocation,
     required VoidCallback onTap,
     required List<Color> gradientColors,
+    required bool isDark,
   }) {
     final isActive =
         currentLocation == route ||
@@ -344,13 +357,13 @@ class AppDrawer extends ConsumerWidget {
                       end: Alignment.bottomRight,
                       colors: isActive
                           ? gradientColors
-                          : [AppColors.darkCard, AppColors.darkCard],
+                          : [isDark ? AppColors.darkCard : AppColors.lightCard, isDark ? AppColors.darkCard : AppColors.lightCard],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
-                    color: isActive ? Colors.white : AppColors.darkHint,
+                    color: isActive ? Colors.white : (isDark ? AppColors.darkHint : AppColors.lightHint),
                     size: 20,
                   ),
                 ),
@@ -362,7 +375,9 @@ class AppDrawer extends ConsumerWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          color: isActive ? Colors.white : AppColors.darkText,
+                          color: isActive
+                              ? (isDark ? Colors.white : AppColors.lightText)
+                              : (isDark ? AppColors.darkText : AppColors.lightText),
                           fontSize: 14,
                           fontWeight: isActive
                               ? FontWeight.w600
@@ -373,7 +388,7 @@ class AppDrawer extends ConsumerWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: AppColors.darkHint,
+                          color: isDark ? AppColors.darkHint : AppColors.lightHint,
                           fontSize: 11,
                         ),
                       ),
@@ -382,7 +397,7 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isActive ? gradientColors.first : AppColors.darkHint,
+                  color: isActive ? gradientColors.first : (isDark ? AppColors.darkHint : AppColors.lightHint),
                   size: 20,
                 ),
               ],
@@ -393,19 +408,16 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildThemeSwitch(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
-
+  Widget _buildThemeSwitch(BuildContext context, WidgetRef ref, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -438,7 +450,7 @@ class AppDrawer extends ConsumerWidget {
                   Text(
                     'TEMA',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : AppColors.lightText,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -447,7 +459,7 @@ class AppDrawer extends ConsumerWidget {
                   Text(
                     isDark ? 'Koyu Tema' : 'Açık Tema',
                     style: TextStyle(
-                      color: AppColors.darkHint,
+                      color: isDark ? AppColors.darkHint : AppColors.lightHint,
                       fontSize: 11,
                     ),
                   ),
