@@ -49,5 +49,7 @@
 	<string>Sesli komut ile hatırlatıcı eklemek için mikrofon izni gereklidir.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Sesli komutları tanımak için konuşma tanıma izni gereklidir.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Adımlarınızı ve günlük fiziksel aktivitenizi takip edebilmek için hareket sensörüne erişim gereklidir.</string>
 </dict>
 </plist>
