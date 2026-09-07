@@ -3,9 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kairos/core/providers/theme_provider.dart';
 import 'package:kairos/core/router/app_router.dart';
+import 'package:kairos/core/services/notification_service.dart';
 import 'package:kairos/core/theme/app_theme.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize timezone data for notifications
+  tz.initializeTimeZones();
+
+  // Initialize notification service
+  await NotificationService().initialize();
+
   runApp(
     const ProviderScope(child: MyApp()),
   );

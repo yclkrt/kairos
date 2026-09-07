@@ -229,6 +229,44 @@ class ReminderListWidget extends ConsumerWidget {
                     color: Colors.white,
                   ),
                 ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    if (reminder.timeOfDay != null) ...[
+                      const Icon(
+                        Icons.access_time_rounded,
+                        size: 14,
+                        color: AppColors.accent,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        reminder.timeDisplay,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.accent,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    if (reminder.reminderOffsetMinutes > 0) ...[
+                      const Icon(
+                        Icons.notifications_active_rounded,
+                        size: 14,
+                        color: AppColors.workoutMedium,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        reminder.offsetDisplay,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.workoutMedium,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
                 if (reminder.description != null &&
                     reminder.description!.isNotEmpty) ...[
                   const SizedBox(height: 6),
@@ -278,188 +316,456 @@ class ReminderListWidget extends ConsumerWidget {
     final titleController = TextEditingController();
     final descController = TextEditingController();
     final selectedDate = ref.read(selectedDateProvider);
+
     showDialog(
       context: context,
-      builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        backgroundColor: const Color(0xFF2D2D2D),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.workoutHigh,
-                          AppColors.workoutMedium,
+      builder: (ctx) {
+        TimeOfDay? selectedTime;
+        int selectedOffset = 0;
+        final List<int> offsetOptions = [0, 5, 10, 15, 30, 60];
+        bool isCustomOffset = false;
+        final customOffsetController = TextEditingController();
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24)),
+              backgroundColor: const Color(0xFF2D2D2D),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  AppColors.workoutHigh,
+                                  AppColors.workoutMedium,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.add_alarm_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          const Text(
+                            'YENI HATIRLATICI',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                              color: Colors.white,
+                            ),
+                          ),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.add_alarm_rounded,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  const Text(
-                    'YENI HATIRLATICI',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              TextField(
-                controller: titleController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Baslik',
-                  hintStyle: TextStyle(
-                    color: AppColors.darkHint.withValues(alpha: 0.5),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(
-                      color: AppColors.workoutHigh,
-                      width: 2,
-                    ),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.title_rounded,
-                    color: AppColors.darkHint,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              TextField(
-                controller: descController,
-                maxLines: 3,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Aciklama (opsiyonel)',
-                  hintStyle: TextStyle(
-                    color: AppColors.darkHint.withValues(alpha: 0.5),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(
-                      color: AppColors.workoutHigh,
-                      width: 2,
-                    ),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.description_rounded,
-                    color: AppColors.darkHint,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: titleController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Baslik',
+                          hintStyle: TextStyle(
+                            color:
+                                AppColors.darkHint.withValues(alpha: 0.5),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.05),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.workoutHigh,
+                              width: 2,
+                            ),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.title_rounded,
+                            color: AppColors.darkHint,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'IPTAL',
+                      const SizedBox(height: 14),
+                      TextField(
+                        controller: descController,
+                        maxLines: 3,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Aciklama (opsiyonel)',
+                          hintStyle: TextStyle(
+                            color:
+                                AppColors.darkHint.withValues(alpha: 0.5),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.05),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.workoutHigh,
+                              width: 2,
+                            ),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.description_rounded,
+                            color: AppColors.darkHint,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'SAAT SECINIZ',
                         style: TextStyle(
-                          color: AppColors.darkHint,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (titleController.text.trim().isNotEmpty) {
-                          ref
-                              .read(reminderActionsProvider)
-                              .addReminder(
-                                date: selectedDate,
-                                title: titleController.text.trim(),
-                                description: descController.text.trim().isEmpty
-                                    ? null
-                                    : descController.text.trim(),
-                              );
-                          Navigator.pop(ctx);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.workoutHigh,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        elevation: 8,
-                        shadowColor: AppColors.workoutHigh.withValues(
-                          alpha: 0.4,
-                        ),
-                      ),
-                      child: const Text(
-                        'KAYDET',
-                        style: TextStyle(
+                          fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                          letterSpacing: 1.5,
+                          color: AppColors.darkHint,
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            final time = await showTimePicker(
+                              context: ctx,
+                              initialTime:
+                                  selectedTime ?? TimeOfDay.now(),
+                              builder: (context, child) => Theme(
+                                data: ThemeData.dark().copyWith(
+                                  colorScheme: const ColorScheme.dark(
+                                    primary: AppColors.workoutHigh,
+                                    surface: Color(0xFF2D2D2D),
+                                  ),
+                                ),
+                                child: child!,
+                              ),
+                            );
+                            if (time != null) {
+                              setDialogState(() => selectedTime = time);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              color:
+                                  Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color:
+                                    Colors.white.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time_rounded,
+                                  color: AppColors.darkHint,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  selectedTime != null
+                                      ? '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}'
+                                      : 'Saat secmek icin tiklayin',
+                                  style: TextStyle(
+                                    color: selectedTime != null
+                                        ? Colors.white
+                                        : AppColors.darkHint
+                                            .withValues(alpha: 0.5),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'HATIRLATMA ZAMANI',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.5,
+                          color: AppColors.darkHint,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ...offsetOptions.map((offset) {
+                            final isSelected =
+                                selectedOffset == offset && !isCustomOffset;
+                            final label = offset == 0
+                                ? 'Tam zamanında'
+                                : '$offset dk once';
+                            return GestureDetector(
+                              onTap: () => setDialogState(() {
+                                selectedOffset = offset;
+                                isCustomOffset = false;
+                              }),
+                              child: AnimatedContainer(
+                                duration:
+                                    const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  gradient: isSelected
+                                      ? const LinearGradient(
+                                          colors: [
+                                            AppColors.workoutHigh,
+                                            AppColors.workoutMedium,
+                                          ],
+                                        )
+                                      : null,
+                                  color: isSelected
+                                      ? null
+                                      : Colors.white
+                                          .withValues(alpha: 0.05),
+                                  borderRadius:
+                                      BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Colors.transparent
+                                        : Colors.white
+                                            .withValues(alpha: 0.1),
+                                  ),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : AppColors.darkHint,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                          GestureDetector(
+                            onTap: () => setDialogState(
+                                () => isCustomOffset = true),
+                            child: AnimatedContainer(
+                              duration:
+                                  const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                gradient: isCustomOffset
+                                    ? const LinearGradient(
+                                        colors: [
+                                          AppColors.workoutHigh,
+                                          AppColors.workoutMedium,
+                                        ],
+                                      )
+                                    : null,
+                                color: isCustomOffset
+                                    ? null
+                                    : Colors.white
+                                        .withValues(alpha: 0.05),
+                                borderRadius:
+                                    BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isCustomOffset
+                                      ? Colors.transparent
+                                      : Colors.white
+                                          .withValues(alpha: 0.1),
+                                ),
+                              ),
+                              child: Text(
+                                'Özel',
+                                style: TextStyle(
+                                  color: isCustomOffset
+                                      ? Colors.white
+                                      : AppColors.darkHint,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                       ),
+                      if (isCustomOffset) ...[
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: customOffsetController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(color: Colors.white),
+                          onChanged: (value) {
+                            final parsed = int.tryParse(value);
+                            if (parsed != null && parsed > 0) {
+                              setDialogState(
+                                  () => selectedOffset = parsed);
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Dakika girin (örn: 7, 13, 22)',
+                            hintStyle: TextStyle(
+                              color: AppColors.darkHint
+                                  .withValues(alpha: 0.5),
+                            ),
+                            filled: true,
+                            fillColor:
+                                Colors.white.withValues(alpha: 0.05),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide(
+                                color:
+                                    Colors.white.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide(
+                                color:
+                                    Colors.white.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                color: AppColors.workoutHigh,
+                                width: 2,
+                              ),
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.edit_rounded,
+                              color: AppColors.darkHint,
+                            ),
+                            suffixText: 'dk',
+                            suffixStyle: const TextStyle(
+                              color: AppColors.darkHint,
+                            ),
+                          ),
+                        ),
+                       ],
+                       const SizedBox(height: 24),
+                       Row(
+                         children: [
+                           Expanded(
+                             child: TextButton(
+                               onPressed: () => Navigator.pop(ctx),
+                               style: TextButton.styleFrom(
+                                 padding: const EdgeInsets.symmetric(
+                                     vertical: 16),
+                                 shape: RoundedRectangleBorder(
+                                   borderRadius:
+                                       BorderRadius.circular(14),
+                                 ),
+                               ),
+                               child: const Text(
+                                 'IPTAL',
+                                 style: TextStyle(
+                                   color: AppColors.darkHint,
+                                   fontWeight: FontWeight.w700,
+                                   letterSpacing: 1,
+                                 ),
+                               ),
+                             ),
+                           ),
+                           const SizedBox(width: 12),
+                           Expanded(
+                             flex: 2,
+                             child: ElevatedButton(
+                               onPressed: () {
+                                 if (titleController.text
+                                     .trim()
+                                     .isNotEmpty) {
+                                   ref
+                                       .read(reminderActionsProvider)
+                                       .addReminder(
+                                          date: selectedDate,
+                                          title: titleController.text
+                                              .trim(),
+                                          description: descController
+                                                  .text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : descController.text
+                                                  .trim(),
+                                          timeOfDay: selectedTime,
+                                          reminderOffsetMinutes:
+                                              selectedOffset,
+                                        );
+                                  Navigator.pop(ctx);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    AppColors.workoutHigh,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(14),
+                                ),
+                                elevation: 8,
+                                shadowColor: AppColors.workoutHigh
+                                    .withValues(alpha: 0.4),
+                              ),
+                              child: const Text(
+                                'KAYDET',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -496,7 +802,7 @@ class ReminderListWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                'SiLEME ONAYi',
+                'SİLME ONAYI',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
@@ -506,7 +812,7 @@ class ReminderListWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                '${reminder.title} hatirlaticisini silmek istediginize emin misiniz?',
+                '${reminder.title} hatırlatıcısını silmek istediğinize emin misiniz?',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -527,7 +833,7 @@ class ReminderListWidget extends ConsumerWidget {
                         ),
                       ),
                       child: const Text(
-                        'VAZGEc',
+                        'VAZGEÇ',
                         style: TextStyle(
                           color: AppColors.darkHint,
                           fontWeight: FontWeight.w700,
@@ -555,7 +861,7 @@ class ReminderListWidget extends ConsumerWidget {
                         Navigator.pop(ctx);
                       },
                       child: const Text(
-                        'SiL',
+                        'SİL',
                         style: TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
@@ -572,26 +878,26 @@ class ReminderListWidget extends ConsumerWidget {
   String _formatDate(DateTime date) {
     const days = [
       'Pazartesi',
-      'Sali',
-      'Carsamba',
-      'Persembe',
+      'Salı',
+      'Çarşamba',
+      'Perşembe',
       'Cuma',
       'Cumartesi',
       'Pazar',
     ];
     const months = [
       'Ocak',
-      'Subat',
+      'Şubat',
       'Mart',
       'Nisan',
-      'Mayis',
+      'Mayıs',
       'Haziran',
       'Temmuz',
-      'Agustos',
-      'Eylul',
+      'Ağustos',
+      'Eylül',
       'Ekim',
-      'Kasim',
-      'Aralik',
+      'Kasım',
+      'Aralık',
     ];
     return '${days[date.weekday - 1]}, ${date.day} ${months[date.month - 1]} ${date.year}';
   }
