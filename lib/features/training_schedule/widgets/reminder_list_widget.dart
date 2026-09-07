@@ -339,9 +339,9 @@ class ReminderListWidget extends ConsumerWidget {
           builder: (context, setDialogState) {
             return Dialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24)),
-              backgroundColor:
-                  isDark ? const Color(0xFF2D2D2D) : Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
@@ -375,7 +375,9 @@ class ReminderListWidget extends ConsumerWidget {
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
-                              color: isDark ? Colors.white : AppColors.lightText,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.lightText,
                             ),
                           ),
                         ],
@@ -384,14 +386,16 @@ class ReminderListWidget extends ConsumerWidget {
                       TextField(
                         controller: titleController,
                         style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.lightText),
+                          color: isDark ? Colors.white : AppColors.lightText,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'Baslik',
                           hintStyle: TextStyle(
-                            color: (isDark
-                                    ? AppColors.darkHint
-                                    : AppColors.lightHint)
-                                .withValues(alpha: 0.5),
+                            color:
+                                (isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint)
+                                    .withValues(alpha: 0.5),
                           ),
                           filled: true,
                           fillColor: isDark
@@ -433,14 +437,16 @@ class ReminderListWidget extends ConsumerWidget {
                         controller: descController,
                         maxLines: 3,
                         style: TextStyle(
-                            color: isDark ? Colors.white : AppColors.lightText),
+                          color: isDark ? Colors.white : AppColors.lightText,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'Aciklama (opsiyonel)',
                           hintStyle: TextStyle(
-                            color: (isDark
-                                    ? AppColors.darkHint
-                                    : AppColors.lightHint)
-                                .withValues(alpha: 0.5),
+                            color:
+                                (isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint)
+                                    .withValues(alpha: 0.5),
                           ),
                           filled: true,
                           fillColor: isDark
@@ -496,8 +502,7 @@ class ReminderListWidget extends ConsumerWidget {
                           onTap: () async {
                             final time = await showTimePicker(
                               context: ctx,
-                              initialTime:
-                                  selectedTime ?? TimeOfDay.now(),
+                              initialTime: selectedTime ?? TimeOfDay.now(),
                               builder: (context, child) => Theme(
                                 data: isDark
                                     ? ThemeData.dark().copyWith(
@@ -522,7 +527,9 @@ class ReminderListWidget extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(14),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 14),
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? Colors.white.withValues(alpha: 0.05)
@@ -551,12 +558,12 @@ class ReminderListWidget extends ConsumerWidget {
                                   style: TextStyle(
                                     color: selectedTime != null
                                         ? (isDark
-                                            ? Colors.white
-                                            : AppColors.lightText)
+                                              ? Colors.white
+                                              : AppColors.lightText)
                                         : (isDark
-                                                ? AppColors.darkHint
-                                                : AppColors.lightHint)
-                                            .withValues(alpha: 0.5),
+                                                  ? AppColors.darkHint
+                                                  : AppColors.lightHint)
+                                              .withValues(alpha: 0.5),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -595,10 +602,11 @@ class ReminderListWidget extends ConsumerWidget {
                                 isCustomOffset = false;
                               }),
                               child: AnimatedContainer(
-                                duration:
-                                    const Duration(milliseconds: 200),
+                                duration: const Duration(milliseconds: 200),
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 10),
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: isSelected
                                       ? const LinearGradient(
@@ -611,20 +619,15 @@ class ReminderListWidget extends ConsumerWidget {
                                   color: isSelected
                                       ? null
                                       : isDark
-                                          ? Colors.white
-                                              .withValues(alpha: 0.05)
-                                          : Colors.black
-                                              .withValues(alpha: 0.05),
-                                  borderRadius:
-                                      BorderRadius.circular(12),
+                                      ? Colors.white.withValues(alpha: 0.05)
+                                      : Colors.black.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: isSelected
                                         ? Colors.transparent
                                         : isDark
-                                            ? Colors.white
-                                                .withValues(alpha: 0.1)
-                                            : Colors.black
-                                                .withValues(alpha: 0.1),
+                                        ? Colors.white.withValues(alpha: 0.1)
+                                        : Colors.black.withValues(alpha: 0.1),
                                   ),
                                 ),
                                 child: Text(
@@ -633,8 +636,8 @@ class ReminderListWidget extends ConsumerWidget {
                                     color: isSelected
                                         ? Colors.white
                                         : isDark
-                                            ? AppColors.darkHint
-                                            : AppColors.lightHint,
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -643,13 +646,14 @@ class ReminderListWidget extends ConsumerWidget {
                             );
                           }),
                           GestureDetector(
-                            onTap: () => setDialogState(
-                                () => isCustomOffset = true),
+                            onTap: () =>
+                                setDialogState(() => isCustomOffset = true),
                             child: AnimatedContainer(
-                              duration:
-                                  const Duration(milliseconds: 200),
+                              duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 10),
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: isCustomOffset
                                     ? const LinearGradient(
@@ -662,20 +666,15 @@ class ReminderListWidget extends ConsumerWidget {
                                 color: isCustomOffset
                                     ? null
                                     : isDark
-                                        ? Colors.white
-                                            .withValues(alpha: 0.05)
-                                        : Colors.black
-                                            .withValues(alpha: 0.05),
-                                borderRadius:
-                                    BorderRadius.circular(12),
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : Colors.black.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isCustomOffset
                                       ? Colors.transparent
                                       : isDark
-                                          ? Colors.white
-                                              .withValues(alpha: 0.1)
-                                          : Colors.black
-                                              .withValues(alpha: 0.1),
+                                      ? Colors.white.withValues(alpha: 0.1)
+                                      : Colors.black.withValues(alpha: 0.1),
                                 ),
                               ),
                               child: Text(
@@ -684,8 +683,8 @@ class ReminderListWidget extends ConsumerWidget {
                                   color: isCustomOffset
                                       ? Colors.white
                                       : isDark
-                                          ? AppColors.darkHint
-                                          : AppColors.lightHint,
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -693,30 +692,29 @@ class ReminderListWidget extends ConsumerWidget {
                             ),
                           ),
                         ],
-                       ),
+                      ),
                       if (isCustomOffset) ...[
                         const SizedBox(height: 12),
                         TextField(
                           controller: customOffsetController,
                           keyboardType: TextInputType.number,
                           style: TextStyle(
-                              color: isDark
-                                  ? Colors.white
-                                  : AppColors.lightText),
+                            color: isDark ? Colors.white : AppColors.lightText,
+                          ),
                           onChanged: (value) {
                             final parsed = int.tryParse(value);
                             if (parsed != null && parsed > 0) {
-                              setDialogState(
-                                  () => selectedOffset = parsed);
+                              setDialogState(() => selectedOffset = parsed);
                             }
                           },
                           decoration: InputDecoration(
                             hintText: 'Dakika girin (örn: 7, 13, 22)',
                             hintStyle: TextStyle(
-                              color: (isDark
-                                      ? AppColors.darkHint
-                                      : AppColors.lightHint)
-                                  .withValues(alpha: 0.5),
+                              color:
+                                  (isDark
+                                          ? AppColors.darkHint
+                                          : AppColors.lightHint)
+                                      .withValues(alpha: 0.5),
                             ),
                             filled: true,
                             fillColor: isDark
@@ -759,74 +757,67 @@ class ReminderListWidget extends ConsumerWidget {
                             ),
                           ),
                         ),
-                       ],
-                       const SizedBox(height: 24),
-                       Row(
-                         children: [
-                           Expanded(
-                             child: TextButton(
-                               onPressed: () => Navigator.pop(ctx),
-                               style: TextButton.styleFrom(
-                                 padding: const EdgeInsets.symmetric(
-                                     vertical: 16),
-                                 shape: RoundedRectangleBorder(
-                                   borderRadius:
-                                       BorderRadius.circular(14),
-                                 ),
-                               ),
-                               child: Text(
-                                 'IPTAL',
-                                 style: TextStyle(
-                                   color: isDark
-                                       ? AppColors.darkHint
-                                       : AppColors.lightHint,
-                                   fontWeight: FontWeight.w700,
-                                   letterSpacing: 1,
-                                 ),
-                               ),
-                             ),
-                           ),
-                           const SizedBox(width: 12),
-                           Expanded(
-                             flex: 2,
-                             child: ElevatedButton(
-                               onPressed: () {
-                                 if (titleController.text
-                                     .trim()
-                                     .isNotEmpty) {
-                                   ref
-                                       .read(reminderActionsProvider)
-                                       .addReminder(
-                                          date: selectedDate,
-                                          title: titleController.text
-                                              .trim(),
-                                          description: descController
-                                                  .text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : descController.text
-                                                  .trim(),
-                                          timeOfDay: selectedTime,
-                                          reminderOffsetMinutes:
-                                              selectedOffset,
-                                        );
+                      ],
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Text(
+                                'IPTAL',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 2,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (titleController.text.trim().isNotEmpty) {
+                                  ref
+                                      .read(reminderActionsProvider)
+                                      .addReminder(
+                                        date: selectedDate,
+                                        title: titleController.text.trim(),
+                                        description:
+                                            descController.text.trim().isEmpty
+                                            ? null
+                                            : descController.text.trim(),
+                                        timeOfDay: selectedTime,
+                                        reminderOffsetMinutes: selectedOffset,
+                                      );
                                   Navigator.pop(ctx);
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    AppColors.workoutHigh,
+                                backgroundColor: AppColors.workoutHigh,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 16),
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(14),
                                 ),
                                 elevation: 8,
-                                shadowColor: AppColors.workoutHigh
-                                    .withValues(alpha: 0.4),
+                                shadowColor: AppColors.workoutHigh.withValues(
+                                  alpha: 0.4,
+                                ),
                               ),
                               child: const Text(
                                 'KAYDET',
@@ -860,8 +851,7 @@ class ReminderListWidget extends ConsumerWidget {
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        backgroundColor:
-            isDark ? const Color(0xFF2D2D2D) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
