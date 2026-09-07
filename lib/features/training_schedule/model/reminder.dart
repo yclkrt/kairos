@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class Reminder {
   final String id;
   final DateTime date;
-  final TimeOfDay? timeOfDay;
+  final TimeOfDay? startTime;
+  final TimeOfDay? endTime;
   final int reminderOffsetMinutes;
   final String title;
   final String? description;
@@ -13,27 +14,50 @@ class Reminder {
   const Reminder({
     required this.id,
     required this.date,
-    this.timeOfDay,
+    this.startTime,
+    this.endTime,
     this.reminderOffsetMinutes = 0,
     required this.title,
     this.description,
     required this.createdAt,
   });
 
-  /// Calculates the actual notification time based on date, time, and offset
+  /// Calculates the actual notification time based on start time and offset
   DateTime get notificationDateTime {
-    final baseTime = timeOfDay != null
-        ? DateTime(date.year, date.month, date.day, timeOfDay!.hour,
-            timeOfDay!.minute)
+    final baseTime = startTime != null
+        ? DateTime(date.year, date.month, date.day, startTime!.hour,
+            startTime!.minute)
         : DateTime(date.year, date.month, date.day, 8, 0);
     return baseTime.subtract(Duration(minutes: reminderOffsetMinutes));
   }
 
-  /// Returns the display time string (e.g., "09:30")
+  /// Returns the display time string (e.g., "09:00 - 10:30" or "09:00")
   String get timeDisplay {
-    if (timeOfDay == null) return '--:--';
-    final h = timeOfDay!.hour.toString().padLeft(2, '0');
-    final m = timeOfDay!.minute.toString().padLeft(2, '0');
+    String formatTime(TimeOfDay? time) {
+      if (time == null) return '--:--';
+      final h = time.hour.toString().padLeft(2, '0');
+      final m = time.minute.toString().padLeft(2, '0');
+      return '$h:$m';
+    }
+
+    if (startTime == null) return '--:--';
+    if (endTime == null) return formatTime(startTime);
+    return '${formatTime(startTime)} - ${formatTime(endTime)}';
+  }
+
+  /// Returns the start time display string
+  String get startTimeDisplay {
+    if (startTime == null) return '--:--';
+    final h = startTime!.hour.toString().padLeft(2, '0');
+    final m = startTime!.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  /// Returns the end time display string
+  String get endTimeDisplay {
+    if (endTime == null) return '--:--';
+    final h = endTime!.hour.toString().padLeft(2, '0');
+    final m = endTime!.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
 
@@ -46,7 +70,8 @@ class Reminder {
   Reminder copyWith({
     String? id,
     DateTime? date,
-    TimeOfDay? timeOfDay,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     int? reminderOffsetMinutes,
     String? title,
     String? description,
@@ -55,7 +80,8 @@ class Reminder {
     return Reminder(
       id: id ?? this.id,
       date: date ?? this.date,
-      timeOfDay: timeOfDay ?? this.timeOfDay,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
       reminderOffsetMinutes:
           reminderOffsetMinutes ?? this.reminderOffsetMinutes,
       title: title ?? this.title,
@@ -68,8 +94,11 @@ class Reminder {
     return {
       'id': id,
       'date': date.toIso8601String(),
-      'timeOfDay': timeOfDay != null
-          ? {'hour': timeOfDay!.hour, 'minute': timeOfDay!.minute}
+      'startTime': startTime != null
+          ? {'hour': startTime!.hour, 'minute': startTime!.minute}
+          : null,
+      'endTime': endTime != null
+          ? {'hour': endTime!.hour, 'minute': endTime!.minute}
           : null,
       'reminderOffsetMinutes': reminderOffsetMinutes,
       'title': title,
@@ -82,10 +111,16 @@ class Reminder {
     return Reminder(
       id: json['id'] as String,
       date: DateTime.parse(json['date'] as String),
-      timeOfDay: json['timeOfDay'] != null
+      startTime: json['startTime'] != null
           ? TimeOfDay(
-              hour: json['timeOfDay']['hour'] as int,
-              minute: json['timeOfDay']['minute'] as int,
+              hour: json['startTime']['hour'] as int,
+              minute: json['startTime']['minute'] as int,
+            )
+          : null,
+      endTime: json['endTime'] != null
+          ? TimeOfDay(
+              hour: json['endTime']['hour'] as int,
+              minute: json['endTime']['minute'] as int,
             )
           : null,
       reminderOffsetMinutes: json['reminderOffsetMinutes'] as int? ?? 0,

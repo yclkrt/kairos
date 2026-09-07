@@ -441,7 +441,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                             date: selectedDate,
                             title: data.title,
                             description: data.description,
-                            timeOfDay: data.time,
+                            startTime: data.time,
                             reminderOffsetMinutes: data.offsetMinutes,
                           );
                       Navigator.pop(ctx);

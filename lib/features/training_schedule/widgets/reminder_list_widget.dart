@@ -240,7 +240,7 @@ class ReminderListWidget extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    if (reminder.timeOfDay != null) ...[
+                    if (reminder.startTime != null) ...[
                       const Icon(
                         Icons.access_time_rounded,
                         size: 14,
@@ -329,7 +329,8 @@ class ReminderListWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) {
-        TimeOfDay? selectedTime;
+        TimeOfDay? selectedStartTime;
+    TimeOfDay? selectedEndTime;
         int selectedOffset = 0;
         final List<int> offsetOptions = [0, 5, 10, 15, 30, 60];
         bool isCustomOffset = false;
@@ -485,7 +486,7 @@ class ReminderListWidget extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'SAAT SECINIZ',
+                        'BAŞLANGIÇ SAATİ',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -502,7 +503,7 @@ class ReminderListWidget extends ConsumerWidget {
                           onTap: () async {
                             final time = await showTimePicker(
                               context: ctx,
-                              initialTime: selectedTime ?? TimeOfDay.now(),
+                              initialTime: selectedStartTime ?? TimeOfDay.now(),
                               builder: (context, child) => Theme(
                                 data: isDark
                                     ? ThemeData.dark().copyWith(
@@ -521,7 +522,7 @@ class ReminderListWidget extends ConsumerWidget {
                               ),
                             );
                             if (time != null) {
-                              setDialogState(() => selectedTime = time);
+                              setDialogState(() => selectedStartTime = time);
                             }
                           },
                           borderRadius: BorderRadius.circular(14),
@@ -552,11 +553,11 @@ class ReminderListWidget extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  selectedTime != null
-                                      ? '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}'
+                                  selectedStartTime != null
+                                      ? '${selectedStartTime!.hour.toString().padLeft(2, '0')}:${selectedStartTime!.minute.toString().padLeft(2, '0')}'
                                       : 'Saat secmek icin tiklayin',
                                   style: TextStyle(
-                                    color: selectedTime != null
+                                    color: selectedStartTime != null
                                         ? (isDark
                                               ? Colors.white
                                               : AppColors.lightText)
@@ -573,6 +574,99 @@ class ReminderListWidget extends ConsumerWidget {
                           ),
                         ),
                       ),
+
+                      /// Bitiş Saati
+                      const SizedBox(height: 20),
+                      Text(
+                        'BİTİŞ SAATİ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.5,
+                          color: isDark
+                              ? AppColors.darkHint
+                              : AppColors.lightHint,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            final time = await showTimePicker(
+                              context: ctx,
+                              initialTime: selectedEndTime ?? TimeOfDay.now(),
+                              builder: (context, child) => Theme(
+                                data: isDark
+                                    ? ThemeData.dark().copyWith(
+                                        colorScheme: const ColorScheme.dark(
+                                          primary: AppColors.workoutHigh,
+                                          surface: Color(0xFF2D2D2D),
+                                        ),
+                                      )
+                                    : ThemeData.light().copyWith(
+                                        colorScheme: const ColorScheme.light(
+                                          primary: AppColors.workoutHigh,
+                                          surface: Colors.white,
+                                        ),
+                                      ),
+                                child: child!,
+                              ),
+                            );
+                            if (time != null) {
+                              setDialogState(() => selectedEndTime = time);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.black.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.1)
+                                    : Colors.black.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time_rounded,
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  selectedEndTime != null
+                                      ? '${selectedEndTime!.hour.toString().padLeft(2, '0')}:${selectedEndTime!.minute.toString().padLeft(2, '0')}'
+                                      : 'Saat secmek icin tiklayin',
+                                  style: TextStyle(
+                                    color: selectedEndTime != null
+                                        ? (isDark
+                                              ? Colors.white
+                                              : AppColors.lightText)
+                                        : (isDark
+                                                  ? AppColors.darkHint
+                                                  : AppColors.lightHint)
+                                              .withValues(alpha: 0.5),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 20),
                       Text(
                         'HATIRLATMA ZAMANI',
@@ -799,7 +893,8 @@ class ReminderListWidget extends ConsumerWidget {
                                             descController.text.trim().isEmpty
                                             ? null
                                             : descController.text.trim(),
-                                        timeOfDay: selectedTime,
+                                        startTime: selectedStartTime,
+                                        endTime: selectedEndTime,
                                         reminderOffsetMinutes: selectedOffset,
                                       );
                                   Navigator.pop(ctx);

@@ -45,13 +45,15 @@ class ReminderActions {
     required DateTime date,
     required String title,
     String? description,
-    TimeOfDay? timeOfDay,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     int reminderOffsetMinutes = 0,
   }) async {
     final reminder = Reminder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       date: DateTime(date.year, date.month, date.day),
-      timeOfDay: timeOfDay,
+      startTime: startTime,
+      endTime: endTime,
       reminderOffsetMinutes: reminderOffsetMinutes,
       title: title,
       description: description,
