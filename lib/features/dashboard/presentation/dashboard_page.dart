@@ -208,6 +208,25 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionTile(
+                  context: context,
+                  isDark: isDark,
+                  title: 'Taekwondo\nSkor',
+                  icon: Icons.sports_martial_arts,
+                  gradient: isDark
+                      ? AppGradients.taekwondoDark
+                      : AppGradients.taekwondo,
+                  route: Routes.taekwondoScoreboard,
+                ),
+              ),
+              const Expanded(child: SizedBox()),
+              const Expanded(child: SizedBox()),
+            ],
+          ),
         ],
       ),
     );
