@@ -16,14 +16,22 @@ class TaekwondoScoreboardPage extends ConsumerStatefulWidget {
 
 class _TaekwondoScoreboardPageState
     extends ConsumerState<TaekwondoScoreboardPage> {
+  // Best of 3 Raunt Takibi
+  int _chungRoundsWon = 0;
+  int _hongRoundsWon = 0;
+  int _currentRound = 1;
+
+  // Raunt İçi Puanlar ve Cezalar (Her rauntta sıfırlanır)
   int _chungScore = 0;
   int _hongScore = 0;
   int _chungPenalties = 0;
   int _hongPenalties = 0;
-  int _currentRound = 1;
+
+  // Süre Yönetimi
   int _roundDurationSec = 120; // Varsayılan 2 dakika (120 sn)
   int _remainingMs = 120 * 1000;
   bool _isRunning = false;
+  bool _isMatchOver = false;
   Timer? _timer;
   DateTime? _lastTickTime;
 
@@ -34,6 +42,8 @@ class _TaekwondoScoreboardPageState
   }
 
   void _startTimer() {
+    if (_isMatchOver) return;
+
     if (_remainingMs <= 0) {
       setState(() {
         _remainingMs = _roundDurationSec * 1000;
@@ -43,7 +53,7 @@ class _TaekwondoScoreboardPageState
     _timer?.cancel();
     _lastTickTime = DateTime.now();
 
-    // 40ms (~25fps) aralıklarla hassas milisaniye/salise sayımı
+    // 40ms (~25fps) aralıklarla hassas milisaniye sayımı
     _timer = Timer.periodic(const Duration(milliseconds: 40), (timer) {
       if (!mounted) {
         timer.cancel();
@@ -63,20 +73,7 @@ class _TaekwondoScoreboardPageState
           _remainingMs = 0;
         });
         _pauseTimer();
-        HapticFeedback.heavyImpact();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '$_currentRound. Raunt Tamamlandı!',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              backgroundColor: AppColors.accent,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        }
+        _handleTimeOut();
       }
     });
 
@@ -99,7 +96,10 @@ class _TaekwondoScoreboardPageState
     });
   }
 
+  /// Puan Ekle
   void _addScore(bool isChung, int points) {
+    if (_isMatchOver) return;
+
     setState(() {
       if (isChung) {
         _chungScore += points;
@@ -107,9 +107,14 @@ class _TaekwondoScoreboardPageState
         _hongScore += points;
       }
     });
+
+    _checkAutomaticRoundEnd();
   }
 
+  /// Puan Çıkar (Hatalı giriş düzeltme)
   void _subtractScore(bool isChung, int points) {
+    if (_isMatchOver) return;
+
     setState(() {
       if (isChung) {
         _chungScore = (_chungScore - points).clamp(0, 999);
@@ -119,7 +124,10 @@ class _TaekwondoScoreboardPageState
     });
   }
 
+  /// Ceza (Gam-jeom) Ekle (+1 puan rakibe verilir)
   void _addPenalty(bool isChung) {
+    if (_isMatchOver) return;
+
     setState(() {
       if (isChung) {
         _chungPenalties++;
@@ -129,9 +137,14 @@ class _TaekwondoScoreboardPageState
         _chungScore += 1;
       }
     });
+
+    _checkAutomaticRoundEnd();
   }
 
+  /// Ceza Geri Al
   void _removePenalty(bool isChung) {
+    if (_isMatchOver) return;
+
     setState(() {
       if (isChung && _chungPenalties > 0) {
         _chungPenalties--;
@@ -143,25 +156,454 @@ class _TaekwondoScoreboardPageState
     });
   }
 
-  void _resetMatch() {
+  /// Otomatik Raunt Bitiş Kuralları Kontrolü (12 Puan Farkı veya 5 Ceza)
+  void _checkAutomaticRoundEnd() {
+    if (_isMatchOver) return;
+
+    // 1. Kural: 5 Ceza (Gam-jeom) Kuralı
+    if (_chungPenalties >= 5) {
+      _endRound(
+        winnerIsChung: false,
+        reason: 'Chung 5 Ceza Aldı (Gam-jeom Sınırı)',
+        badge: '5 CEZA',
+      );
+      return;
+    }
+    if (_hongPenalties >= 5) {
+      _endRound(
+        winnerIsChung: true,
+        reason: 'Hong 5 Ceza Aldı (Gam-jeom Sınırı)',
+        badge: '5 CEZA',
+      );
+      return;
+    }
+
+    // 2. Kural: 12 Puan Farkı Kuralı (Point Gap - PTG)
+    if (_chungScore - _hongScore >= 12) {
+      _endRound(
+        winnerIsChung: true,
+        reason: '12 Puan Farkı Üstünlüğü ($_chungScore - $_hongScore)',
+        badge: '12 PUAN FARKI (PTG)',
+      );
+      return;
+    }
+    if (_hongScore - _chungScore >= 12) {
+      _endRound(
+        winnerIsChung: false,
+        reason: '12 Puan Farkı Üstünlüğü ($_hongScore - $_chungScore)',
+        badge: '12 PUAN FARKI (PTG)',
+      );
+      return;
+    }
+  }
+
+  /// Süre Bittiğinde Kazananı Belirle
+  void _handleTimeOut() {
+    HapticFeedback.heavyImpact();
+
+    if (_chungScore > _hongScore) {
+      _endRound(
+        winnerIsChung: true,
+        reason: 'Süre Bitimi Puan Üstünlüğü ($_chungScore - $_hongScore)',
+        badge: 'SÜRE BİTİMİ',
+      );
+    } else if (_hongScore > _chungScore) {
+      _endRound(
+        winnerIsChung: false,
+        reason: 'Süre Bitimi Puan Üstünlüğü ($_hongScore - $_chungScore)',
+        badge: 'SÜRE BİTİMİ',
+      );
+    } else {
+      // Puanlar eşitse: Beraberlik Çözümü Dialogu
+      _showTieBreakerDialog();
+    }
+  }
+
+  /// Beraberlik Durumunda Hakem Kararı / Üstünlük Seçimi
+  void _showTieBreakerDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.balance, color: AppColors.warning),
+            SizedBox(width: 10),
+            Text('Raunt Berabere Bitti'),
+          ],
+        ),
+        content: Text(
+          'Puanlar eşit ($_chungScore - $_hongScore).\nTaekwondo kurallarına göre teknik üstünlük sağlayan tarafı seçiniz:',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _endRound(
+                winnerIsChung: true,
+                reason: 'Teknik Üstünlük / Hakem Kararı',
+                badge: 'BERABERLİK ÇÖZÜMÜ',
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF1565C0),
+            ),
+            child: const Text('CHUNG KAZANDI',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _endRound(
+                winnerIsChung: false,
+                reason: 'Teknik Üstünlük / Hakem Kararı',
+                badge: 'BERABERLİK ÇÖZÜMÜ',
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFC62828),
+            ),
+            child: const Text('HONG KAZANDI',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Raundu Sonlandır ve Maç Bitişini Kontrol Et
+  void _endRound({
+    required bool winnerIsChung,
+    required String reason,
+    required String badge,
+  }) {
+    _pauseTimer();
+    HapticFeedback.vibrate();
+
+    int newChungWins = _chungRoundsWon;
+    int newHongWins = _hongRoundsWon;
+
+    if (winnerIsChung) {
+      newChungWins++;
+    } else {
+      newHongWins++;
+    }
+
+    setState(() {
+      _chungRoundsWon = newChungWins;
+      _hongRoundsWon = newHongWins;
+    });
+
+    final winnerName = winnerIsChung ? 'CHUNG (MAVİ)' : 'HONG (KIRMIZI)';
+    final winnerColor = winnerIsChung
+        ? const Color(0xFF1565C0)
+        : const Color(0xFFC62828);
+
+    // Maç Bitti mi? (2 Raunt Kazanan veya 3. Raunt Sonu)
+    final matchWon = newChungWins >= 2 || newHongWins >= 2;
+
+    if (matchWon) {
+      setState(() {
+        _isMatchOver = true;
+      });
+      _showMatchWinnerDialog(
+        winnerName: winnerName,
+        winnerColor: winnerColor,
+        reason: reason,
+        finalScore: '$newChungWins - $newHongWins',
+      );
+    } else {
+      _showRoundResultDialog(
+        roundNumber: _currentRound,
+        winnerName: winnerName,
+        winnerColor: winnerColor,
+        reason: reason,
+        badge: badge,
+        scoreSummary: 'CHUNG $_chungScore - $_hongScore HONG',
+      );
+    }
+  }
+
+  /// Raunt Sonu Bilgilendirme ve Sonraki Raundu Başlatma Dialogu
+  void _showRoundResultDialog({
+    required int roundNumber,
+    required String winnerName,
+    required Color winnerColor,
+    required String reason,
+    required String badge,
+    required String scoreSummary,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: isDark ? const Color(0xFF1E1E24) : Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: winnerColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: winnerColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Text(
+                    badge,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: winnerColor,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  '$roundNumber. RAUNDU KAZANAN',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    color: isDark ? Colors.white54 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  winnerName,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: winnerColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  scoreSummary,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  reason,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.black.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        'CHUNG: $_chungRoundsWon Raunt',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1565C0),
+                        ),
+                      ),
+                      const Text('|',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'HONG: $_hongRoundsWon Raunt',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFC62828),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 22),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _startNextRound();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      '${_currentRound + 1}. RAUNDA GEÇ (Puanlar Sıfırlanır)',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Maç Kazananı Kutlama Dialogu
+  void _showMatchWinnerDialog({
+    required String winnerName,
+    required Color winnerColor,
+    required String reason,
+    required String finalScore,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          backgroundColor: isDark ? const Color(0xFF1E1E24) : Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(26),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: winnerColor.withValues(alpha: 0.15),
+                  ),
+                  child: Icon(
+                    Icons.emoji_events_rounded,
+                    size: 48,
+                    color: winnerColor,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'MAÇ ŞAMPİYONU',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 3,
+                    color: AppColors.warning,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  winnerName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: winnerColor,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Raunt Skoru: $finalScore',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  reason,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _resetMatch();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: winnerColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text(
+                      'YENİ MAÇ BAŞLAT',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Sonraki Raundu Başlat (Puanlar ve cezalar sıfırlanır, süre tazelenir)
+  void _startNextRound() {
     _pauseTimer();
     setState(() {
+      _currentRound++;
       _chungScore = 0;
       _hongScore = 0;
       _chungPenalties = 0;
       _hongPenalties = 0;
-      _currentRound = 1;
       _remainingMs = _roundDurationSec * 1000;
       _isRunning = false;
     });
   }
 
-  void _nextRound() {
+  /// Tüm Maçı Sıfırla
+  void _resetMatch() {
     _pauseTimer();
     setState(() {
-      _currentRound++;
+      _chungRoundsWon = 0;
+      _hongRoundsWon = 0;
+      _currentRound = 1;
+      _chungScore = 0;
+      _hongScore = 0;
+      _chungPenalties = 0;
+      _hongPenalties = 0;
       _remainingMs = _roundDurationSec * 1000;
       _isRunning = false;
+      _isMatchOver = false;
     });
   }
 
@@ -197,12 +639,10 @@ class _TaekwondoScoreboardPageState
   void _showDurationSettingsDialog(BuildContext context, bool isDark) {
     int selectedMinutes = _roundDurationSec ~/ 60;
     int selectedSeconds = _roundDurationSec % 60;
-    final minController = TextEditingController(
-      text: selectedMinutes.toString(),
-    );
-    final secController = TextEditingController(
-      text: selectedSeconds.toString(),
-    );
+    final minController =
+        TextEditingController(text: selectedMinutes.toString());
+    final secController =
+        TextEditingController(text: selectedSeconds.toString());
 
     final presetDurations = [
       {'label': '1 Dk', 'seconds': 60},
@@ -329,9 +769,8 @@ class _TaekwondoScoreboardPageState
                                 labelText: 'Dakika',
                                 labelStyle: TextStyle(
                                   fontSize: 12,
-                                  color: isDark
-                                      ? Colors.white60
-                                      : Colors.black54,
+                                  color:
+                                      isDark ? Colors.white60 : Colors.black54,
                                 ),
                                 filled: true,
                                 fillColor: isDark
@@ -367,9 +806,8 @@ class _TaekwondoScoreboardPageState
                                 labelText: 'Saniye',
                                 labelStyle: TextStyle(
                                   fontSize: 12,
-                                  color: isDark
-                                      ? Colors.white60
-                                      : Colors.black54,
+                                  color:
+                                      isDark ? Colors.white60 : Colors.black54,
                                 ),
                                 filled: true,
                                 fillColor: isDark
@@ -393,9 +831,8 @@ class _TaekwondoScoreboardPageState
                               child: Text(
                                 'İptal',
                                 style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white60
-                                      : Colors.black54,
+                                  color:
+                                      isDark ? Colors.white60 : Colors.black54,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -407,10 +844,10 @@ class _TaekwondoScoreboardPageState
                               onPressed: () {
                                 final mins =
                                     int.tryParse(minController.text.trim()) ??
-                                    0;
+                                        0;
                                 final secs =
                                     int.tryParse(secController.text.trim()) ??
-                                    0;
+                                        0;
                                 final totalSecs = (mins * 60) + secs;
                                 if (totalSecs > 0) {
                                   _setCustomRoundDuration(totalSecs);
@@ -420,9 +857,8 @@ class _TaekwondoScoreboardPageState
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.accent,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -504,13 +940,13 @@ class _TaekwondoScoreboardPageState
           child: Column(
             children: [
               _buildTimerSection(isDark),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildScoreboard(isDark),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildScoringButtons(isDark),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildPenaltySection(isDark),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildControlButtons(isDark),
             ],
           ),
@@ -520,15 +956,14 @@ class _TaekwondoScoreboardPageState
   }
 
   Widget _buildTimerSection(bool isDark) {
-    final isPaused =
-        !_isRunning &&
+    final isPaused = !_isRunning &&
         _remainingMs < (_roundDurationSec * 1000) &&
         _remainingMs > 0;
     final isUnderOneMinute = _remainingMs < 60000;
     final isCriticalTime = _remainingMs <= 10000 && _isRunning;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E24) : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -552,24 +987,12 @@ class _TaekwondoScoreboardPageState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Tur Rozeti
+              // Raund Rozeti ve Best of 3 Durumu
               Row(
                 children: [
-                  Text(
-                    'RAUND',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                      color: isDark ? Colors.white54 : Colors.black45,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 5,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
                       gradient: isDark
                           ? AppGradients.taekwondoDark
@@ -577,11 +1000,12 @@ class _TaekwondoScoreboardPageState
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      '$_currentRound',
+                      'RAUND $_currentRound/3',
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 13,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
@@ -595,10 +1019,8 @@ class _TaekwondoScoreboardPageState
                   onTap: () => _showDurationSettingsDialog(context, isDark),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.07)
@@ -640,7 +1062,7 @@ class _TaekwondoScoreboardPageState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Süre Sayacı (1 dk altı ise SS.cs, üstü ise MM:SS)
           GestureDetector(
@@ -650,7 +1072,7 @@ class _TaekwondoScoreboardPageState
                 Text(
                   _formatDisplayTime(_remainingMs),
                   style: TextStyle(
-                    fontSize: isUnderOneMinute ? 54 : 50,
+                    fontSize: isUnderOneMinute ? 54 : 48,
                     fontWeight: FontWeight.w200,
                     fontFamily: 'monospace',
                     color: isCriticalTime
@@ -659,10 +1081,25 @@ class _TaekwondoScoreboardPageState
                     letterSpacing: isUnderOneMinute ? 2 : 4,
                   ),
                 ),
+                if (isUnderOneMinute)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      'SANİYE . SALİSE',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                        color: isCriticalTime
+                            ? const Color(0xFFFF5252).withValues(alpha: 0.8)
+                            : (isDark ? Colors.white38 : Colors.black38),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Başlat / Duraklat Butonları
           Row(
@@ -689,9 +1126,7 @@ class _TaekwondoScoreboardPageState
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
+                            horizontal: 14, vertical: 14),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.08)
@@ -781,32 +1216,49 @@ class _TaekwondoScoreboardPageState
             playerName: 'CHUNG',
             score: _chungScore,
             penalties: _chungPenalties,
+            roundsWon: _chungRoundsWon,
             isBlue: true,
           ),
         ),
-        const SizedBox(width: 16),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDark ? const Color(0xFF2D2D3D) : const Color(0xFFE0E0E0),
-          ),
-          child: Text(
-            'VS',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              color: isDark ? Colors.white54 : Colors.black45,
+        const SizedBox(width: 12),
+        Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color:
+                    isDark ? const Color(0xFF2D2D3D) : const Color(0xFFE0E0E0),
+              ),
+              child: Text(
+                'VS',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white54 : Colors.black45,
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 6),
+            Text(
+              'BEST OF 3',
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
           child: _buildPlayerCard(
             isDark: isDark,
             playerName: 'HONG',
             score: _hongScore,
             penalties: _hongPenalties,
+            roundsWon: _hongRoundsWon,
             isBlue: false,
           ),
         ),
@@ -819,14 +1271,19 @@ class _TaekwondoScoreboardPageState
     required String playerName,
     required int score,
     required int penalties,
+    required int roundsWon,
     required bool isBlue,
   }) {
     final gradient = isBlue
-        ? const LinearGradient(colors: [Color(0xFF1565C0), Color(0xFF0D47A1)])
-        : const LinearGradient(colors: [Color(0xFFC62828), Color(0xFFB71C1C)]);
+        ? const LinearGradient(
+            colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
+          )
+        : const LinearGradient(
+            colors: [Color(0xFFC62828), Color(0xFFB71C1C)],
+          );
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(20),
@@ -840,38 +1297,59 @@ class _TaekwondoScoreboardPageState
       ),
       child: Column(
         children: [
+          // Oyuncu Adı
           Text(
             playerName,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w900,
               color: Colors.white,
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
+
+          // Kazanılan Raunt Noktaları (Best of 3 Takibi)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildRoundDot(filled: roundsWon >= 1),
+              const SizedBox(width: 6),
+              _buildRoundDot(filled: roundsWon >= 2),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Canlı Puan
           Text(
             '$score',
             style: const TextStyle(
-              fontSize: 56,
+              fontSize: 52,
               fontWeight: FontWeight.w200,
               color: Colors.white,
               fontFamily: 'monospace',
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+
+          // Ceza Durumu (5 Ceza Sınırı)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: penalties >= 4
+                  ? Colors.red.shade900.withValues(alpha: 0.8)
+                  : Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
+              border: penalties >= 4
+                  ? Border.all(color: Colors.yellowAccent, width: 1.5)
+                  : null,
             ),
             child: Text(
-              'CEZA: $penalties',
-              style: const TextStyle(
+              'CEZA: $penalties / 5',
+              style: TextStyle(
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                color: penalties >= 4 ? Colors.yellowAccent : Colors.white,
               ),
             ),
           ),
@@ -880,9 +1358,33 @@ class _TaekwondoScoreboardPageState
     );
   }
 
+  Widget _buildRoundDot({required bool filled}) {
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: filled ? Colors.amberAccent : Colors.white.withValues(alpha: 0.25),
+        border: Border.all(
+          color: filled ? Colors.amber : Colors.white.withValues(alpha: 0.6),
+          width: 1.5,
+        ),
+        boxShadow: filled
+            ? [
+                BoxShadow(
+                  color: Colors.amberAccent.withValues(alpha: 0.8),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                )
+              ]
+            : null,
+      ),
+    );
+  }
+
   Widget _buildScoringButtons(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E24) : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -906,13 +1408,13 @@ class _TaekwondoScoreboardPageState
           Text(
             'PUAN EKLE / ÇIKAR',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white54 : Colors.black45,
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -921,39 +1423,27 @@ class _TaekwondoScoreboardPageState
                     const Text(
                       'CHUNG',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF1565C0),
                         letterSpacing: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildScoreButton(
-                          '+1',
-                          () => _addScore(true, 1),
-                          const Color(0xFF1565C0),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '+2',
-                          () => _addScore(true, 2),
-                          const Color(0xFF1565C0),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '+3',
-                          () => _addScore(true, 3),
-                          const Color(0xFF1565C0),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '-1',
-                          () => _subtractScore(true, 1),
-                          Colors.grey,
-                        ),
+                        _buildScoreButton('+1', () => _addScore(true, 1),
+                            const Color(0xFF1565C0)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('+2', () => _addScore(true, 2),
+                            const Color(0xFF1565C0)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('+3', () => _addScore(true, 3),
+                            const Color(0xFF1565C0)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('-1', () => _subtractScore(true, 1),
+                            Colors.grey),
                       ],
                     ),
                   ],
@@ -965,39 +1455,27 @@ class _TaekwondoScoreboardPageState
                     const Text(
                       'HONG',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFFC62828),
                         letterSpacing: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildScoreButton(
-                          '+1',
-                          () => _addScore(false, 1),
-                          const Color(0xFFC62828),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '+2',
-                          () => _addScore(false, 2),
-                          const Color(0xFFC62828),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '+3',
-                          () => _addScore(false, 3),
-                          const Color(0xFFC62828),
-                        ),
-                        const SizedBox(width: 6),
-                        _buildScoreButton(
-                          '-1',
-                          () => _subtractScore(false, 1),
-                          Colors.grey,
-                        ),
+                        _buildScoreButton('+1', () => _addScore(false, 1),
+                            const Color(0xFFC62828)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('+2', () => _addScore(false, 2),
+                            const Color(0xFFC62828)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('+3', () => _addScore(false, 3),
+                            const Color(0xFFC62828)),
+                        const SizedBox(width: 4),
+                        _buildScoreButton('-1', () => _subtractScore(false, 1),
+                            Colors.grey),
                       ],
                     ),
                   ],
@@ -1022,13 +1500,16 @@ class _TaekwondoScoreboardPageState
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
           ),
           child: Center(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -1041,7 +1522,7 @@ class _TaekwondoScoreboardPageState
 
   Widget _buildPenaltySection(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E24) : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -1062,16 +1543,30 @@ class _TaekwondoScoreboardPageState
       ),
       child: Column(
         children: [
-          Text(
-            'CEZA (GAM-JEOM)',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white54 : Colors.black45,
-              letterSpacing: 2,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'CEZA (GAM-JEOM)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white54 : Colors.black45,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '(5 Ceza = Raunt Sonu)',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.amber.shade700,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -1133,17 +1628,20 @@ class _TaekwondoScoreboardPageState
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
           ),
           child: Center(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: color,
                 letterSpacing: 1,
@@ -1165,7 +1663,7 @@ class _TaekwondoScoreboardPageState
               onTap: _resetMatch,
               borderRadius: BorderRadius.circular(14),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -1184,9 +1682,9 @@ class _TaekwondoScoreboardPageState
                       Icon(Icons.refresh, size: 18, color: Colors.grey),
                       SizedBox(width: 8),
                       Text(
-                        'SIFIRLA',
+                        'MAÇI SIFIRLA',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: Colors.grey,
                           letterSpacing: 1,
@@ -1199,15 +1697,32 @@ class _TaekwondoScoreboardPageState
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: _nextRound,
+              onTap: () {
+                // Manuel raunt sonlandırma (hakem kararıyla)
+                if (_chungScore > _hongScore) {
+                  _endRound(
+                    winnerIsChung: true,
+                    reason: 'Manuel Raunt Bitişi',
+                    badge: 'RAUNT BİTTİ',
+                  );
+                } else if (_hongScore > _chungScore) {
+                  _endRound(
+                    winnerIsChung: false,
+                    reason: 'Manuel Raunt Bitişi',
+                    badge: 'RAUNT BİTTİ',
+                  );
+                } else {
+                  _showTieBreakerDialog();
+                }
+              },
               borderRadius: BorderRadius.circular(14),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   gradient: isDark
                       ? AppGradients.taekwondoDark
@@ -1221,9 +1736,9 @@ class _TaekwondoScoreboardPageState
                       Icon(Icons.skip_next, size: 18, color: Colors.white),
                       SizedBox(width: 8),
                       Text(
-                        'RAUND',
+                        'RAUNDU BİTİR',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 1,
