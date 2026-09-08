@@ -126,20 +126,20 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         statusIcon = Icons.play_circle_outline;
     }
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(statusIcon, color: statusColor, size: 24),
+              Icon(statusIcon, color: statusColor, size: 20),
               const SizedBox(width: 8),
               Text(
                 state.statusText,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 4,
+                  letterSpacing: 3,
                   color: statusColor,
                 ),
               ),
@@ -149,13 +149,13 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
               state.status == RoundStatus.resting ||
               state.status == RoundStatus.paused)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: 4),
               child: Text(
-                'Raund \${state.currentRound} / \${state.totalRounds}',
+                'Raund ${state.currentRound} / ${state.totalRounds}',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  letterSpacing: 2,
+                  letterSpacing: 1,
                   color: isDark ? Colors.white38 : Colors.black38,
                 ),
               ),
@@ -171,7 +171,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildTimerCircle(state, isDark),
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
           _buildRoundIndicators(state, isDark),
         ],
       ),
@@ -192,8 +192,8 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         return Transform.scale(
           scale: scale,
           child: Container(
-            width: 260,
-            height: 260,
+            width: 220,
+            height: 220,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -207,19 +207,19 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  width: 240,
-                  height: 240,
+                  width: 200,
+                  height: 200,
                   child: CircularProgressIndicator(
                     value: progress,
-                    strokeWidth: 8,
+                    strokeWidth: 6,
                     backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                     strokeCap: StrokeCap.round,
                   ),
                 ),
                 Container(
-                  width: 220,
-                  height: 220,
+                  width: 180,
+                  height: 180,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
@@ -228,14 +228,14 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(isResting ? Icons.self_improvement : Icons.sports_mma, size: 40, color: primaryColor),
-                      const SizedBox(height: 12),
+                      Icon(isResting ? Icons.self_improvement : Icons.sports_mma, size: 32, color: primaryColor),
+                      const SizedBox(height: 8),
                       Text(
                         state.formattedTime,
-                        style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, fontFamily: 'monospace', letterSpacing: 4, color: isDark ? Colors.white : const Color(0xFF1A1A1A)),
+                        style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, fontFamily: 'monospace', letterSpacing: 4, color: isDark ? Colors.white : const Color(0xFF1A1A1A)),
                       ),
                       const SizedBox(height: 4),
-                      Text(isResting ? 'DINLENME' : 'RAUND', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 3, color: primaryColor)),
+                      Text(isResting ? 'DINLENME' : 'RAUND', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2, color: primaryColor)),
                     ],
                   ),
                 ),
@@ -249,9 +249,11 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
 
   Widget _buildRoundIndicators(BoxingRoundState state, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 8,
+        runSpacing: 8,
         children: List.generate(state.totalRounds, (index) {
           final roundNumber = index + 1;
           final isCompleted = roundNumber < state.currentRound &&
@@ -266,21 +268,27 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
           } else {
             dotColor = isDark ? Colors.white24 : Colors.black26;
           }
-          return Row(
-            children: [
-              Container(
-                width: isCurrent ? 16 : 12,
-                height: isCurrent ? 16 : 12,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: dotColor,
-                  boxShadow: isCurrent ? [BoxShadow(color: dotColor.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 2)] : null,
-                ),
-                child: isCompleted ? const Icon(Icons.check, size: 8, color: Colors.white) : null,
-              ),
-              if (index < state.totalRounds - 1)
-                Container(width: 20, height: 2, color: isCompleted ? AppColors.success : (isDark ? Colors.white12 : Colors.black12)),
-            ],
+          return Container(
+            width: isCurrent ? 32 : 28,
+            height: isCurrent ? 32 : 28,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: dotColor,
+              border: isCurrent ? Border.all(color: Colors.white, width: 2) : null,
+              boxShadow: isCurrent ? [BoxShadow(color: dotColor.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 2)] : null,
+            ),
+            child: Center(
+              child: isCompleted
+                  ? const Icon(Icons.check, size: 14, color: Colors.white)
+                  : Text(
+                      '$roundNumber',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: isCurrent || isCompleted ? Colors.white : (isDark ? Colors.white54 : Colors.black54),
+                      ),
+                    ),
+            ),
           );
         }),
       ),
@@ -289,7 +297,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
 
   Widget _buildControlButtons(BoxingRoundState state, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -297,7 +305,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             GestureDetector(
               onTap: () => ref.read(boxingRoundProvider.notifier).startWorkout(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(colors: [Color(0xFFE84C3D), Color(0xFFC62828)]),
                   borderRadius: BorderRadius.circular(30),
@@ -379,9 +387,18 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
 
   Widget _buildSettingsPanel(BoxingRoundState state, bool isDark) {
     final isEditable = state.status == RoundStatus.idle;
+    final roundMinutes = state.roundDurationSeconds ~/ 60;
+    final roundSeconds = state.roundDurationSeconds % 60;
+    String roundTimeText;
+    if (roundSeconds == 0) {
+      roundTimeText = '$roundMinutes dakika';
+    } else {
+      roundTimeText = '$roundMinutes dk $roundSeconds sn';
+    }
+    final restTimeText = '${state.restDurationSeconds} saniye';
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
@@ -391,34 +408,34 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('AYARLAR', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 3, color: isDark ? Colors.white38 : Colors.black38)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildSettingRow(
             icon: Icons.format_list_numbered_rounded,
             label: 'Raund Sayısı',
-            value: '\${state.totalRounds}',
+            value: '${state.totalRounds} raund',
             isEditable: isEditable,
             onDecrement: state.totalRounds > 1 ? () => ref.read(boxingRoundProvider.notifier).updateTotalRounds(state.totalRounds - 1) : null,
-            onIncrement: state.totalRounds < 20 ? () => ref.read(boxingRoundProvider.notifier).updateTotalRounds(state.totalRounds + 1) : null,
+            onIncrement: state.totalRounds < 12 ? () => ref.read(boxingRoundProvider.notifier).updateTotalRounds(state.totalRounds + 1) : null,
             isDark: isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           _buildSettingRow(
             icon: Icons.timer_outlined,
             label: 'Raund Süresi',
-            value: '\${(state.roundDurationSeconds / 60).toInt()} dk',
+            value: roundTimeText,
             isEditable: isEditable,
             onDecrement: state.roundDurationSeconds > 30 ? () => ref.read(boxingRoundProvider.notifier).updateRoundDuration(state.roundDurationSeconds - 30) : null,
             onIncrement: state.roundDurationSeconds < 600 ? () => ref.read(boxingRoundProvider.notifier).updateRoundDuration(state.roundDurationSeconds + 30) : null,
             isDark: isDark,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           _buildSettingRow(
             icon: Icons.self_improvement,
             label: 'Dinlenme Süresi',
-            value: '\${state.restDurationSeconds} sn',
+            value: restTimeText,
             isEditable: isEditable,
             onDecrement: state.restDurationSeconds > 10 ? () => ref.read(boxingRoundProvider.notifier).updateRestDuration(state.restDurationSeconds - 10) : null,
-            onIncrement: state.restDurationSeconds < 300 ? () => ref.read(boxingRoundProvider.notifier).updateRestDuration(state.restDurationSeconds + 10) : null,
+            onIncrement: state.restDurationSeconds < 120 ? () => ref.read(boxingRoundProvider.notifier).updateRestDuration(state.restDurationSeconds + 10) : null,
             isDark: isDark,
           ),
         ],
@@ -438,27 +455,27 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
     return Row(
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: [const Color(0xFFE84C3D).withValues(alpha: 0.2), const Color(0xFFC62828).withValues(alpha: 0.1)]),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: const Color(0xFFE84C3D), size: 20),
+          child: Icon(icon, color: const Color(0xFFE84C3D), size: 18),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
-              Text(value, style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38)),
+              Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
+              Text(value, style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38)),
             ],
           ),
         ),
         if (isEditable) ...[
           _buildStepButton(icon: Icons.remove, onTap: onDecrement, isDark: isDark),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           _buildStepButton(icon: Icons.add, onTap: onIncrement, isDark: isDark),
         ],
       ],
@@ -470,8 +487,8 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isEnabled
@@ -483,7 +500,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                 : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
           ),
         ),
-        child: Icon(icon, size: 18, color: isEnabled ? (isDark ? Colors.white70 : Colors.black54) : (isDark ? Colors.white24 : Colors.black26)),
+        child: Icon(icon, size: 16, color: isEnabled ? (isDark ? Colors.white70 : Colors.black54) : (isDark ? Colors.white24 : Colors.black26)),
       ),
     );
   }
