@@ -86,6 +86,7 @@ class BoxingRoundState {
 
 class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
   Timer? _timer;
+  Timer? _autoResetTimer;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   BoxingRoundNotifier() : super(BoxingRoundState.initial());
@@ -128,6 +129,7 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
   }
 
   void startWorkout() {
+    _autoResetTimer?.cancel();
     if (state.status == RoundStatus.idle || state.status == RoundStatus.finished) {
       _startRound();
     } else if (state.status == RoundStatus.paused) {
@@ -169,6 +171,7 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
           isWorkoutActive: false,
         );
         _playSound(false);
+        _startAutoResetTimer();
       } else {
         state = state.copyWith(
           status: RoundStatus.resting,
@@ -185,6 +188,13 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
       );
       _startTimer();
     }
+  }
+
+  void _startAutoResetTimer() {
+    _autoResetTimer?.cancel();
+    _autoResetTimer = Timer(const Duration(seconds: 5), () {
+      resetWorkout();
+    });
   }
 
   void pauseTimer() {
@@ -207,6 +217,7 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
 
   void resetWorkout() {
     _timer?.cancel();
+    _autoResetTimer?.cancel();
     state = BoxingRoundState.initial();
   }
 
@@ -220,6 +231,7 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
   @override
   void dispose() {
     _timer?.cancel();
+    _autoResetTimer?.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
