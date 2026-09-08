@@ -6,6 +6,7 @@ import 'package:kairos/features/taekwondo_scoreboard/presentation/taekwondo_scor
 import 'package:kairos/features/training_plans/presentation/training_plan_detail.dart';
 import 'package:kairos/features/training_plans/presentation/training_plans.dart';
 import 'package:kairos/features/training_schedule/presentation/training_schedule.dart';
+import 'package:kairos/features/boxing_round/presentation/boxing_round_page.dart';
 
 class Routes {
   static const String stopwatch = '/stopwatch';
@@ -14,6 +15,7 @@ class Routes {
   static const String trainingPlanDetail = '/training-plan-detail';
   static const String trainingSchedule = '/training-schedule';
   static const String taekwondoScoreboard = '/taekwondo-scoreboard';
+  static const String boxingRound = '/boxing-round';
 
   static String trainingPlanDetailWithId(String id) =>
       '/training-plan-detail/$id';
@@ -55,6 +57,11 @@ final appRouterProvider = StateProvider<GoRouter>(
         path: Routes.taekwondoScoreboard,
         name: 'taekwondo-scoreboard',
         builder: (context, state) => const TaekwondoScoreboardPage(),
+      ),
+      GoRoute(
+        path: Routes.boxingRound,
+        name: 'boxing-round',
+        builder: (context, state) => const BoxingRoundPage(),
       ),
     ],
   ),
