@@ -115,6 +115,7 @@ class AppDrawer extends ConsumerWidget {
                     gradientColors: AppGradients.boxingIcon,
                     isDark: isDark,
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
