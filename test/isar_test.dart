@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
-import 'package:kairos/features/training_plans/data/training_plan_collection.dart';
+import 'package:sporlab/features/training_plans/data/training_plan_collection.dart';
 
 void main() {
   late Isar isar;

@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kairos/features/dashboard/presentation/dashboard_page.dart';
-import 'package:kairos/features/stopwatch/presentation/stopwatch_page.dart';
-import 'package:kairos/features/taekwondo_scoreboard/presentation/taekwondo_scoreboard_page.dart';
-import 'package:kairos/features/training_plans/presentation/training_plan_detail.dart';
-import 'package:kairos/features/training_plans/presentation/training_plans.dart';
-import 'package:kairos/features/training_schedule/presentation/training_schedule.dart';
-import 'package:kairos/features/boxing_round/presentation/boxing_round_page.dart';
+import 'package:sporlab/features/dashboard/presentation/dashboard_page.dart';
+import 'package:sporlab/features/stopwatch/presentation/stopwatch_page.dart';
+import 'package:sporlab/features/taekwondo_scoreboard/presentation/taekwondo_scoreboard_page.dart';
+import 'package:sporlab/features/training_plans/presentation/training_plan_detail.dart';
+import 'package:sporlab/features/training_plans/presentation/training_plans.dart';
+import 'package:sporlab/features/training_schedule/presentation/training_schedule.dart';
+import 'package:sporlab/features/boxing_round/presentation/boxing_round_page.dart';
 
 class Routes {
   static const String stopwatch = '/stopwatch';

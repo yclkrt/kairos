@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/core/theme/app_gradients.dart';
-import 'package:kairos/core/widgets/main_scaffold.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/core/theme/app_gradients.dart';
+import 'package:sporlab/core/widgets/main_scaffold.dart';
 
 enum MatchPhase {
   fighting, // Normal raunt devam ediyor veya başlatılmayı bekliyor

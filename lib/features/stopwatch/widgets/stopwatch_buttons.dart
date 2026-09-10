@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/features/stopwatch/providers/stopwatch_provider.dart';
+import 'package:sporlab/features/stopwatch/providers/stopwatch_provider.dart';
 
 class StopWatchButtons extends ConsumerWidget {
   final bool isRunning;
@@ -117,7 +117,8 @@ class _GradientButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(18),          splashColor: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(18),
+          splashColor: Colors.white.withValues(alpha: 0.2),
           highlightColor: Colors.white.withValues(alpha: 0.1),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),

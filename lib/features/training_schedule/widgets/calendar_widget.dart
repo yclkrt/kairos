@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/features/training_schedule/providers/reminder_provider.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
 
 enum CalendarViewMode { monthly, yearly }
 
@@ -106,14 +106,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.black.withValues(alpha: 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildNavButton(
             Icons.chevron_left_rounded,
-            _viewMode == CalendarViewMode.monthly ? _goToPreviousMonth : _goToPreviousYear,
+            _viewMode == CalendarViewMode.monthly
+                ? _goToPreviousMonth
+                : _goToPreviousYear,
           ),
           Column(
             children: [
@@ -152,7 +156,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           ),
           _buildNavButton(
             Icons.chevron_right_rounded,
-            _viewMode == CalendarViewMode.monthly ? _goToNextMonth : _goToNextYear,
+            _viewMode == CalendarViewMode.monthly
+                ? _goToNextMonth
+                : _goToNextYear,
           ),
         ],
       ),
@@ -185,7 +191,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppColors.workoutHigh.withValues(alpha: isDark ? 0.3 : 0.2),
+              color: AppColors.workoutHigh.withValues(
+                alpha: isDark ? 0.3 : 0.2,
+              ),
               width: 1,
             ),
           ),
@@ -226,12 +234,38 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 
   String _getMonthYearString(DateTime date) {
-    const months = ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
+    const months = [
+      'Ocak',
+      'Subat',
+      'Mart',
+      'Nisan',
+      'Mayis',
+      'Haziran',
+      'Temmuz',
+      'Agustos',
+      'Eylul',
+      'Ekim',
+      'Kasim',
+      'Aralik',
+    ];
     return '${months[date.month - 1]} ${date.year}';
   }
 
   String _getMonthName(int month) {
-    const months = ['Oca', 'Sub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Agu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    const months = [
+      'Oca',
+      'Sub',
+      'Mar',
+      'Nis',
+      'May',
+      'Haz',
+      'Tem',
+      'Agu',
+      'Eyl',
+      'Eki',
+      'Kas',
+      'Ara',
+    ];
     return months[month - 1];
   }
 
@@ -259,7 +293,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         final monthDate = DateTime(_currentYear, month);
         final now = DateTime.now();
         final isCurrentMonth = now.year == _currentYear && now.month == month;
-        final reminderCount = reminderDates.where((d) => d.year == _currentYear && d.month == month).length;
+        final reminderCount = reminderDates
+            .where((d) => d.year == _currentYear && d.month == month)
+            .length;
 
         return GestureDetector(
           onTap: () => _switchToMonthView(monthDate),
@@ -278,10 +314,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                               AppColors.darkCard.withValues(alpha: 0.5),
                               AppColors.darkCard.withValues(alpha: 0.3),
                             ]
-                          : [
-                              Colors.white,
-                              const Color(0xFFF5F5F5),
-                            ],
+                          : [Colors.white, const Color(0xFFF5F5F5)],
                     ),
               borderRadius: BorderRadius.circular(16),
               border: isCurrentMonth
@@ -309,22 +342,30 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   _getMonthName(month),
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: isCurrentMonth ? FontWeight.w800 : FontWeight.w600,
+                    fontWeight: isCurrentMonth
+                        ? FontWeight.w800
+                        : FontWeight.w600,
                     color: isCurrentMonth
                         ? Colors.white
                         : isDark
-                            ? AppColors.darkText
-                            : AppColors.lightText,
+                        ? AppColors.darkText
+                        : AppColors.lightText,
                   ),
                 ),
                 if (reminderCount > 0) ...[
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: isCurrentMonth
-                            ? [Colors.white.withValues(alpha: 0.3), Colors.white.withValues(alpha: 0.2)]
+                            ? [
+                                Colors.white.withValues(alpha: 0.3),
+                                Colors.white.withValues(alpha: 0.2),
+                              ]
                             : [AppColors.accent, AppColors.workoutLow],
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -347,12 +388,21 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     );
   }
 
-  bool _isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   Widget _buildCalendarGrid(AsyncValue<List<dynamic>> allRemindersAsync) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
-    final lastDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+    final firstDayOfMonth = DateTime(
+      _currentMonth.year,
+      _currentMonth.month,
+      1,
+    );
+    final lastDayOfMonth = DateTime(
+      _currentMonth.year,
+      _currentMonth.month + 1,
+      0,
+    );
     final startWeekday = firstDayOfMonth.weekday;
     final daysInMonth = lastDayOfMonth.day;
     final reminderDates = allRemindersAsync.when(
@@ -391,26 +441,29 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       colors: [AppColors.workoutHigh, AppColors.workoutMedium],
                     )
                   : isToday
-                      ? LinearGradient(
-                          colors: isDark
-                              ? [
-                                  AppColors.workoutHigh.withValues(alpha: 0.15),
-                                  AppColors.workoutMedium.withValues(alpha: 0.1),
-                                ]
-                              : [
-                                  AppColors.workoutHigh.withValues(alpha: 0.1),
-                                  AppColors.workoutMedium.withValues(alpha: 0.05),
-                                ],
-                        )
-                      : null,
+                  ? LinearGradient(
+                      colors: isDark
+                          ? [
+                              AppColors.workoutHigh.withValues(alpha: 0.15),
+                              AppColors.workoutMedium.withValues(alpha: 0.1),
+                            ]
+                          : [
+                              AppColors.workoutHigh.withValues(alpha: 0.1),
+                              AppColors.workoutMedium.withValues(alpha: 0.05),
+                            ],
+                    )
+                  : null,
               borderRadius: BorderRadius.circular(14),
               border: isSelected
                   ? null
                   : isToday
-                      ? Border.all(color: AppColors.workoutHigh, width: 2)
-                      : hasReminder
-                          ? Border.all(color: AppColors.accent.withValues(alpha: 0.5), width: 1)
-                          : null,
+                  ? Border.all(color: AppColors.workoutHigh, width: 2)
+                  : hasReminder
+                  ? Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.5),
+                      width: 1,
+                    )
+                  : null,
               boxShadow: isSelected
                   ? [
                       BoxShadow(
@@ -428,14 +481,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   '$day',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: isSelected || isToday ? FontWeight.w800 : FontWeight.w600,
+                    fontWeight: isSelected || isToday
+                        ? FontWeight.w800
+                        : FontWeight.w600,
                     color: isSelected
                         ? Colors.white
                         : isToday
-                            ? AppColors.workoutHigh
-                            : isWeekend
-                                ? (isDark ? AppColors.darkHint.withValues(alpha: 0.6) : AppColors.lightHint.withValues(alpha: 0.6))
-                                : (isDark ? AppColors.darkText : AppColors.lightText),
+                        ? AppColors.workoutHigh
+                        : isWeekend
+                        ? (isDark
+                              ? AppColors.darkHint.withValues(alpha: 0.6)
+                              : AppColors.lightHint.withValues(alpha: 0.6))
+                        : (isDark ? AppColors.darkText : AppColors.lightText),
                   ),
                 ),
                 if (hasReminder)
@@ -446,8 +503,15 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       height: 6,
                       decoration: BoxDecoration(
                         gradient: isSelected
-                            ? const LinearGradient(colors: [Colors.white, Color(0xFFE0E0E0)])
-                            : const LinearGradient(colors: [AppColors.accent, AppColors.workoutLow]),
+                            ? const LinearGradient(
+                                colors: [Colors.white, Color(0xFFE0E0E0)],
+                              )
+                            : const LinearGradient(
+                                colors: [
+                                  AppColors.accent,
+                                  AppColors.workoutLow,
+                                ],
+                              ),
                         shape: BoxShape.circle,
                       ),
                     ),

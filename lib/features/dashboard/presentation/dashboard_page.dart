@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kairos/core/router/app_router.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/core/theme/app_gradients.dart';
-import 'package:kairos/core/widgets/main_scaffold.dart';
-import 'package:kairos/features/dashboard/widgets/pedometer_card.dart';
+import 'package:sporlab/core/router/app_router.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/core/theme/app_gradients.dart';
+import 'package:sporlab/core/widgets/main_scaffold.dart';
+import 'package:sporlab/features/dashboard/widgets/pedometer_card.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});

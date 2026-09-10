@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:kairos/core/services/notification_service.dart';
-import 'package:kairos/features/training_schedule/data/reminder_service.dart';
-import 'package:kairos/features/training_schedule/model/reminder.dart';
+import 'package:sporlab/core/services/notification_service.dart';
+import 'package:sporlab/features/training_schedule/data/reminder_service.dart';
+import 'package:sporlab/features/training_schedule/model/reminder.dart';
 
 // Notification service provider
 final notificationServiceProvider = Provider<NotificationService>((ref) {
@@ -14,8 +14,9 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 // Reminders for the selected date
-final remindersForSelectedDateProvider =
-    FutureProvider<List<Reminder>>((ref) async {
+final remindersForSelectedDateProvider = FutureProvider<List<Reminder>>((
+  ref,
+) async {
   final selectedDate = ref.watch(selectedDateProvider);
   final service = ref.read(reminderServiceProvider);
   return service.getRemindersForDate(selectedDate);
@@ -78,7 +79,8 @@ class ReminderActions {
 
     // Cancel old notification and reschedule
     await _notificationService.cancelNotification(
-        int.parse(reminder.id) % 100000);
+      int.parse(reminder.id) % 100000,
+    );
     await _notificationService.scheduleReminderNotification(
       id: int.parse(reminder.id) % 100000,
       title: reminder.title,

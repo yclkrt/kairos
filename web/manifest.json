@@ -1,6 +1,6 @@
 {
-    "name": "kairos",
-    "short_name": "kairos",
+    "name": "sporlab",
+    "short_name": "sporlab",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

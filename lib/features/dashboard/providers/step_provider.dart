@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:kairos/features/dashboard/data/step_tracker_service.dart';
-import 'package:kairos/features/dashboard/model/step_data.dart';
+import 'package:sporlab/features/dashboard/data/step_tracker_service.dart';
+import 'package:sporlab/features/dashboard/model/step_data.dart';
 
 // Singleton StepTrackerService provider
 final stepTrackerServiceProvider = Provider<StepTrackerService>((ref) {
@@ -60,6 +60,6 @@ class StepTrackerNotifier extends StateNotifier<StepData> {
 // Step data provider for UI consumption
 final stepTrackerProvider =
     StateNotifierProvider<StepTrackerNotifier, StepData>((ref) {
-  final service = ref.watch(stepTrackerServiceProvider);
-  return StepTrackerNotifier(service);
-});
+      final service = ref.watch(stepTrackerServiceProvider);
+      return StepTrackerNotifier(service);
+    });

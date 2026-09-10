@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kairos/core/theme/app_colors.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
 
 class AppTheme {
   // Light Theme

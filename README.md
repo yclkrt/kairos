@@ -1,6 +1,6 @@
 <div align="center">
 
-# Kairos - Antrenman Takip Uygulamasi
+# Sporlab - Antrenman Takip Uygulamasi
 
 <p align="center">
   <img src="https://img.shields.io/badge/Flutter-3.10+-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
@@ -18,7 +18,7 @@
 
 ## Uygulama Hakkinda
 
-**Kairos**, sporcularin antrenman planlarini olusturmasina, takip etmesine ve performanslarini analiz etmesine olanak taniman modern bir mobil uygulamadir. Flutter ile gelistirilmis olup, hem Android hem de iOS platformlarinda sorunsuz calisir.
+**Sporlab**, sporcularin antrenman planlarini olusturmasina, takip etmesine ve performanslarini analiz etmesine olanak taniman modern bir mobil uygulamadir. Flutter ile gelistirilmis olup, hem Android hem de iOS platformlarinda sorunsuz calisir.
 
 ---
 
@@ -77,8 +77,8 @@
 
 1. Projeyi kopyalayin:
 ```bash
-git clone https://github.com/yclkrt/kairos.git
-cd kairos
+git clone https://github.com/yclkrt/sporlab.git
+cd sporlab
 ```
 
 2. Bagimliliklari yukleyin:
@@ -114,7 +114,7 @@ flutter run
 ## Proje Yapisi
 
 ```
-kairos/
+sporlab/
 ├── lib/
 │   ├── main.dart
 │   ├── core/
@@ -205,7 +205,7 @@ flutter build ios --release
 ## Iletisim
 
 - **Gelistirici:** [@yclkrt](https://github.com/yclkrt)
-- **Proje Linki:** [https://github.com/yclkrt/kairos](https://github.com/yclkrt/kairos)
+- **Proje Linki:** [https://github.com/yclkrt/sporlab](https://github.com/yclkrt/sporlab)
 
 ---
 
@@ -213,6 +213,6 @@ flutter build ios --release
 
 ⭐ Bu projeyi begendiyseniz yildiz vermeyi unutmayin!
 
-**Kairos** - Antrenmaninizi yonetmenin akilli yolu
+**Sporlab** - Antrenmaninizi yonetmenin akilli yolu
 
 </div>

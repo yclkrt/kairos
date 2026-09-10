@@ -1,10 +1,10 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/providers/theme_provider.dart';
-import 'package:kairos/core/router/app_router.dart';
-import 'package:kairos/core/services/notification_service.dart';
-import 'package:kairos/core/theme/app_theme.dart';
+import 'package:sporlab/core/providers/theme_provider.dart';
+import 'package:sporlab/core/router/app_router.dart';
+import 'package:sporlab/core/services/notification_service.dart';
+import 'package:sporlab/core/theme/app_theme.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 
 void main() async {

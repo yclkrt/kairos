@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:kairos/core/services/voice_command_service.dart';
+import 'package:sporlab/core/services/voice_command_service.dart';
 
 final voiceCommandServiceProvider = Provider<VoiceCommandService>((ref) {
   return VoiceCommandService();
@@ -8,9 +8,9 @@ final voiceCommandServiceProvider = Provider<VoiceCommandService>((ref) {
 
 final voiceCommandStateProvider =
     StateNotifierProvider<VoiceCommandNotifier, VoiceCommandState>((ref) {
-  final service = ref.watch(voiceCommandServiceProvider);
-  return VoiceCommandNotifier(service);
-});
+      final service = ref.watch(voiceCommandServiceProvider);
+      return VoiceCommandNotifier(service);
+    });
 
 class VoiceCommandState {
   final bool isListening;
@@ -73,9 +73,7 @@ class VoiceCommandNotifier extends StateNotifier<VoiceCommandState> {
     await _service.startListening(
       onResult: (result) {
         if (result.finalResult) {
-          state = state.copyWith(
-            recognizedText: result.recognizedWords,
-          );
+          state = state.copyWith(recognizedText: result.recognizedWords);
         }
       },
       onDone: () {

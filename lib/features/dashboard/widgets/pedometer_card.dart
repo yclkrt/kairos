@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/features/dashboard/model/step_data.dart';
-import 'package:kairos/features/dashboard/providers/step_provider.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/features/dashboard/model/step_data.dart';
+import 'package:sporlab/features/dashboard/providers/step_provider.dart';
 
 class PedometerCard extends ConsumerStatefulWidget {
   const PedometerCard({super.key});

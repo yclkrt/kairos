@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:kairos/features/training_plans/data/isar_service.dart';
-import 'package:kairos/features/training_plans/data/training_plan_collection.dart';
-import 'package:kairos/features/training_plans/model/training_plan.dart';
+import 'package:sporlab/features/training_plans/data/isar_service.dart';
+import 'package:sporlab/features/training_plans/data/training_plan_collection.dart';
+import 'package:sporlab/features/training_plans/model/training_plan.dart';
 
 class TrainingPlansNotifier extends StateNotifier<List<TrainingPlan>> {
   TrainingPlansNotifier() : super([]) {
@@ -17,7 +17,9 @@ class TrainingPlansNotifier extends StateNotifier<List<TrainingPlan>> {
     return TrainingPlan(
       id: c.planId ?? '',
       name: c.name ?? '',
-      type: c.type == 'personal' ? TrainingPlanType.personal : TrainingPlanType.group,
+      type: c.type == 'personal'
+          ? TrainingPlanType.personal
+          : TrainingPlanType.group,
       description: c.description ?? '',
       durationMinutes: c.durationMinutes ?? 0,
       createdAt: c.createdAt ?? DateTime.now(),
@@ -55,5 +57,5 @@ class TrainingPlansNotifier extends StateNotifier<List<TrainingPlan>> {
 
 final trainingPlansProvider =
     StateNotifierProvider<TrainingPlansNotifier, List<TrainingPlan>>(
-  (ref) => TrainingPlansNotifier(),
-);
+      (ref) => TrainingPlansNotifier(),
+    );

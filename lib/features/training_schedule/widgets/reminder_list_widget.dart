@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/features/training_schedule/model/reminder.dart';
-import 'package:kairos/features/training_schedule/providers/reminder_provider.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/features/training_schedule/model/reminder.dart';
+import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
 
 class ReminderListWidget extends ConsumerWidget {
   const ReminderListWidget({super.key});
@@ -330,7 +330,7 @@ class ReminderListWidget extends ConsumerWidget {
       context: context,
       builder: (ctx) {
         TimeOfDay? selectedStartTime;
-    TimeOfDay? selectedEndTime;
+        TimeOfDay? selectedEndTime;
         int selectedOffset = 0;
         final List<int> offsetOptions = [0, 5, 10, 15, 30, 60];
         bool isCustomOffset = false;

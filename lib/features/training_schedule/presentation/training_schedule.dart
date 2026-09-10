@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/core/widgets/main_scaffold.dart';
-import 'package:kairos/features/training_schedule/providers/reminder_provider.dart';
-import 'package:kairos/features/training_schedule/providers/voice_command_provider.dart';
-import 'package:kairos/features/training_schedule/widgets/calendar_widget.dart';
-import 'package:kairos/features/training_schedule/widgets/reminder_list_widget.dart';
-import 'package:kairos/core/services/voice_command_service.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/core/widgets/main_scaffold.dart';
+import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
+import 'package:sporlab/features/training_schedule/providers/voice_command_provider.dart';
+import 'package:sporlab/features/training_schedule/widgets/calendar_widget.dart';
+import 'package:sporlab/features/training_schedule/widgets/reminder_list_widget.dart';
+import 'package:sporlab/core/services/voice_command_service.dart';
 
 class TrainingSchedule extends ConsumerStatefulWidget {
   const TrainingSchedule({super.key});

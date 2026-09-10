@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:kairos/features/training_plans/data/training_plan_collection.dart';
+import 'package:sporlab/features/training_plans/data/training_plan_collection.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IsarService {

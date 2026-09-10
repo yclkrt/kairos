@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kairos/features/dashboard/model/step_data.dart';
+import 'package:sporlab/features/dashboard/model/step_data.dart';
 
 class StepTrackerService {
   static const String _keyStepGoal = 'kairos_step_goal';
@@ -36,11 +36,13 @@ class StepTrackerService {
     if (hasPermission) {
       _startListening();
     } else {
-      _emitUpdate(_currentData.copyWith(
-        hasPermission: false,
-        isLoading: false,
-        errorMessage: 'Adım takibi için hareket sensörü izni gereklidir.',
-      ));
+      _emitUpdate(
+        _currentData.copyWith(
+          hasPermission: false,
+          isLoading: false,
+          errorMessage: 'Adım takibi için hareket sensörü izni gereklidir.',
+        ),
+      );
     }
   }
 
@@ -84,19 +86,23 @@ class StepTrackerService {
         cancelOnError: false,
       );
 
-      _emitUpdate(_currentData.copyWith(
-        isSensorAvailable: true,
-        hasPermission: true,
-        isLoading: false,
-        errorMessage: null,
-      ));
+      _emitUpdate(
+        _currentData.copyWith(
+          isSensorAvailable: true,
+          hasPermission: true,
+          isLoading: false,
+          errorMessage: null,
+        ),
+      );
     } catch (e) {
       debugPrint('Pedometer initialization error: $e');
-      _emitUpdate(_currentData.copyWith(
-        isSensorAvailable: false,
-        isLoading: false,
-        errorMessage: 'Cihazda adım sensörü bulunamadı veya erişilemedi.',
-      ));
+      _emitUpdate(
+        _currentData.copyWith(
+          isSensorAvailable: false,
+          isLoading: false,
+          errorMessage: 'Cihazda adım sensörü bulunamadı veya erişilemedi.',
+        ),
+      );
     }
   }
 
@@ -149,19 +155,24 @@ class StepTrackerService {
       // Verileri kaydet
       await prefs.setInt(_keyLastRawSensorSteps, event.steps);
       await prefs.setInt(_keyTodaySteps, calculatedTodaySteps);
-      await prefs.setInt('$_keyHistoryPrefix$todayDateStr', calculatedTodaySteps);
+      await prefs.setInt(
+        '$_keyHistoryPrefix$todayDateStr',
+        calculatedTodaySteps,
+      );
 
       // Haftalık verileri güncelle
       final weekly = await _loadWeeklyHistory(prefs, now, calculatedTodaySteps);
 
-      _emitUpdate(_currentData.copyWith(
-        todaySteps: calculatedTodaySteps,
-        isSensorAvailable: true,
-        hasPermission: true,
-        isLoading: false,
-        errorMessage: null,
-        weeklySteps: weekly,
-      ));
+      _emitUpdate(
+        _currentData.copyWith(
+          todaySteps: calculatedTodaySteps,
+          isSensorAvailable: true,
+          hasPermission: true,
+          isLoading: false,
+          errorMessage: null,
+          weeklySteps: weekly,
+        ),
+      );
     } catch (e) {
       debugPrint('Error processing step count: $e');
     }
@@ -185,11 +196,13 @@ class StepTrackerService {
 
   void _onStepCountError(dynamic error) {
     debugPrint('Pedometer Step Count Error: $error');
-    _emitUpdate(_currentData.copyWith(
-      isSensorAvailable: false,
-      isLoading: false,
-      errorMessage: 'Adım sensörü verisi alınamıyor.',
-    ));
+    _emitUpdate(
+      _currentData.copyWith(
+        isSensorAvailable: false,
+        isLoading: false,
+        errorMessage: 'Adım sensörü verisi alınamıyor.',
+      ),
+    );
   }
 
   void _onPedestrianStatusError(dynamic error) {
@@ -267,10 +280,9 @@ class StepTrackerService {
     await prefs.setInt('$_keyHistoryPrefix$todayDateStr', newTotal);
 
     final weekly = await _loadWeeklyHistory(prefs, now, newTotal);
-    _emitUpdate(_currentData.copyWith(
-      todaySteps: newTotal,
-      weeklySteps: weekly,
-    ));
+    _emitUpdate(
+      _currentData.copyWith(todaySteps: newTotal, weeklySteps: weekly),
+    );
   }
 
   /// Bugünün adımlarını sıfırla
@@ -286,10 +298,7 @@ class StepTrackerService {
     await prefs.setInt('$_keyHistoryPrefix$todayDateStr', 0);
 
     final weekly = await _loadWeeklyHistory(prefs, now, 0);
-    _emitUpdate(_currentData.copyWith(
-      todaySteps: 0,
-      weeklySteps: weekly,
-    ));
+    _emitUpdate(_currentData.copyWith(todaySteps: 0, weeklySteps: weekly));
   }
 
   void _emitUpdate(StepData data) {

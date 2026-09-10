@@ -1,4 +1,4 @@
-package com.example.kairos
+package com.example.sporlab
 
 import io.flutter.embedding.android.FlutterActivity
 

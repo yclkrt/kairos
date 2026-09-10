@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kairos/core/theme/app_colors.dart';
-import 'package:kairos/core/theme/app_gradients.dart';
-import 'package:kairos/core/widgets/main_scaffold.dart';
-import 'package:kairos/features/boxing_round/providers/boxing_round_provider.dart';
+import 'package:sporlab/core/theme/app_colors.dart';
+import 'package:sporlab/core/theme/app_gradients.dart';
+import 'package:sporlab/core/widgets/main_scaffold.dart';
+import 'package:sporlab/features/boxing_round/providers/boxing_round_provider.dart';
 
 class BoxingRoundPage extends ConsumerStatefulWidget {
   const BoxingRoundPage({super.key});

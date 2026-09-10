@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Ana Renkler - Kairos teması
+  // Ana Renkler - Sporlab teması
   static const Color primary = Color(0xFFE84C3D); // Enerjik kırmızı
   static const Color secondary = Color(0xFFF39C12); // Turuncu - motivasyon
   static const Color accent = Color(0xFF2ECC71); // Yeşil - başarı/ilerleme

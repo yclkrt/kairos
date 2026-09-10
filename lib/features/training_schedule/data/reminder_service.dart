@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kairos/features/training_schedule/model/reminder.dart';
+import 'package:sporlab/features/training_schedule/model/reminder.dart';
 
 class ReminderService {
   static const String _storageKey = 'training_reminders';
@@ -53,4 +53,6 @@ class ReminderService {
   }
 }
 
-final reminderServiceProvider = Provider<ReminderService>((ref) => ReminderService());
+final reminderServiceProvider = Provider<ReminderService>(
+  (ref) => ReminderService(),
+);
