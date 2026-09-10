@@ -38,8 +38,6 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 children: [
                   _buildThemeSwitch(context, ref, isDark),
-                  _buildStatsCard(isDark),
-                  const SizedBox(height: 16),
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.dashboard_rounded,
@@ -151,19 +149,16 @@ class AppDrawer extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(3),
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: const CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.sports_gymnastics,
-                    size: 32,
-                    color: Colors.white,
-                  ),
+                child: const Icon(
+                  Icons.flash_on_rounded,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
               const SizedBox(width: 14),
@@ -172,17 +167,17 @@ class AppDrawer extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sporcu',
+                      'KAIROS',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
+                        letterSpacing: 1.5,
                       ),
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Premium \u00dcye',
+                      'Sporcu Performans Takip',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 13,
@@ -192,145 +187,11 @@ class AppDrawer extends ConsumerWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Stack(
-                  children: [
-                    const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppColors.accent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.local_fire_department,
-                  color: Colors.amber,
-                  size: 20,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '"Durdurulamayan bir g\u00fcc varsa, o da kararl\u0131l\u0131kt\u0131r."',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatsCard(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem(
-            Icons.local_fire_department,
-            '12',
-            'Gün',
-            AppColors.primary,
-            isDark,
-          ),
-          _buildStatDivider(isDark),
-          _buildStatItem(
-            Icons.timer_outlined,
-            '48',
-            'Saat',
-            AppColors.secondary,
-            isDark,
-          ),
-          _buildStatDivider(isDark),
-          _buildStatItem(
-            Icons.emoji_events_outlined,
-            '5',
-            'Başarı',
-            AppColors.accent,
-            isDark,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(
-    IconData icon,
-    String value,
-    String label,
-    Color color,
-    bool isDark,
-  ) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 22),
-        const SizedBox(height: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: isDark ? Colors.white : AppColors.lightText,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            color: isDark ? AppColors.darkHint : AppColors.lightHint,
-            fontSize: 11,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatDivider(bool isDark) {
-    return Container(
-      width: 1,
-      height: 40,
-      color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
     );
   }
 
