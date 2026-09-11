@@ -76,5 +76,12 @@
     "daily_goal": "Daily Goal",
     "select_the_number_of_steps_you_want_to_complete_daily": "Select the number of steps you want to complete daily",
     "give_up": "Give Up",
-    "save": "Save"
+    "save": "Save",
+    "lap": "Lap",
+    "add_lap": "Add Lap",
+    "laps": "Laps",
+    "the_best": "The Best",
+    "the_worst": "The Worst",
+    "lap_duration": "Lap Duration",
+    "total": "Total"
 }

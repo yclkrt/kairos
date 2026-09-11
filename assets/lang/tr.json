@@ -77,5 +77,12 @@
     "daily_goal": "Günlük Hedef",
     "select_the_number_of_steps_you_want_to_complete_daily": "Günlük tamamlamak istediğiniz adım sayısını seçin",
     "give_up": "Vazgeç",
-    "save": "Kaydet"
+    "save": "Kaydet",
+    "lap": "Tur",
+    "add_lap": "Tur Ekle",
+    "laps": "Turlar",
+    "the_best": "En İyi",
+    "the_worst": "En Kötü",
+    "lap_duration": "Tur Süresi",
+    "total": "Toplam"
 }

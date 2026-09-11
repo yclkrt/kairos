@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_gradients.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
 import 'package:sporlab/features/stopwatch/providers/stopwatch_provider.dart';
@@ -51,8 +52,8 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'KRONOMETRE',
+            Text(
+              context.ln('stopwatch').toUpperCase(),
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -79,7 +80,7 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
                   ),
                 ),
                 child: Text(
-                  '${timerState.laps.length} TUR',
+                  '${timerState.laps.length} ${context.ln('lap').toUpperCase()}',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -202,8 +203,8 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'TUR EKLE',
+                Text(
+                  context.ln('add_lap').toUpperCase(),
                   style: TextStyle(
                     color: Color(0xFFE84C3D),
                     fontSize: 13,
@@ -237,7 +238,7 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
               ),
               const SizedBox(width: 8),
               Text(
-                'TURLAR',
+                context.ln('laps').toUpperCase(),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -249,14 +250,14 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
               // En iyi ve en kotu tur gostergesi
               if (laps.length > 1) ...[
                 _buildLapStat(
-                  'EN İYİ',
+                  context.ln('the_best').toUpperCase(),
                   _getBestLap(laps),
                   const Color(0xFF00E676),
                   isDark,
                 ),
                 const SizedBox(width: 12),
                 _buildLapStat(
-                  'EN KÖTÜ',
+                  context.ln('the_worst').toUpperCase(),
                   _getWorstLap(laps),
                   const Color(0xFFFF5252),
                   isDark,
@@ -351,7 +352,7 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tur Süresi',
+                    context.ln('lap_duration').toUpperCase(),
                     style: TextStyle(
                       fontSize: 10,
                       color: isDark ? Colors.white30 : Colors.black38,
@@ -383,7 +384,7 @@ class _StopwatchPageState extends ConsumerState<StopwatchPage>
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Toplam',
+                  context.ln('total'),
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.white30 : Colors.black38,
