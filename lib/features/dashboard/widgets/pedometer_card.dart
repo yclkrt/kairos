@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/features/dashboard/model/step_data.dart';
 import 'package:sporlab/features/dashboard/providers/step_provider.dart';
@@ -196,7 +197,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'GÜNLÜK ADIM',
+                  context.ln('daily_steps').toUpperCase(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
@@ -330,8 +331,8 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Hareket İzni Gerekli',
+                Text(
+                  context.ln('movement_permit_required'),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -340,7 +341,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Adım sayımı için sensör erişimine izin vermelisiniz.',
+                  context.ln('you_must_grant_sensor_access_to_count_steps'),
                   style: TextStyle(
                     fontSize: 11,
                     color: isDark ? Colors.white70 : Colors.black87,
@@ -360,8 +361,8 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              'İzin Ver',
+            child: Text(
+              context.ln('allow'),
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
             ),
           ),
@@ -469,7 +470,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                       const SizedBox(width: 4),
                       Text(
                         isReached
-                            ? 'HEDEF TAMAM'
+                            ? context.ln('target_ok').toUpperCase()
                             : '%${data.progressPercentage}',
                         style: TextStyle(
                           fontSize: 11,
@@ -508,7 +509,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
 
                 // Target Subtitle
                 Text(
-                  '/${_formatNumber(data.stepGoal)} Adım',
+                  '/${_formatNumber(data.stepGoal)} ${context.ln('step')}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -519,7 +520,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                 if (!isReached) ...[
                   const SizedBox(height: 4),
                   Text(
-                    '${_formatNumber(data.remainingSteps)} adım kaldı',
+                    '${_formatNumber(data.remainingSteps)} ${context.ln('step_remained').toLowerCase()}',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
@@ -548,7 +549,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
             gradientColors: [const Color(0xFFFF5252), const Color(0xFFFF7A00)],
             value: _formatNumber(data.caloriesBurned),
             unit: 'kcal',
-            label: 'Kalori',
+            label: context.ln('calorie'),
           ),
         ),
         const SizedBox(width: 10),
@@ -560,7 +561,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
             gradientColors: [const Color(0xFF11998E), const Color(0xFF38EF7D)],
             value: data.distanceKm.toStringAsFixed(2),
             unit: 'km',
-            label: 'Mesafe',
+            label: context.ln('distance'),
           ),
         ),
         const SizedBox(width: 10),
@@ -571,8 +572,8 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
             iconColor: const Color(0xFF00D2FF),
             gradientColors: [const Color(0xFF0052D4), const Color(0xFF4364F7)],
             value: '${data.activeMinutes}',
-            unit: 'dk',
-            label: 'Aktif Süre',
+            unit: context.ln('minute_short'),
+            label: context.ln('active_duration'),
           ),
         ),
       ],
@@ -683,7 +684,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'HAFTALIK AKTİVİTE',
+                context.ln('weekly_activity').toUpperCase(),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
@@ -692,7 +693,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                 ),
               ),
               Text(
-                '7 Günlük Trend',
+                context.ln('7_day_trend'),
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -824,7 +825,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'GÜNLÜK HEDEF',
+                      context.ln('daily_goal').toUpperCase(),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
@@ -834,7 +835,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Günlük tamamlamak istediğiniz adım sayısını seçin:',
+                      '${context.ln('select_the_number_of_steps_you_want_to_complete_daily')}:',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 12,
@@ -899,7 +900,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                           child: TextButton(
                             onPressed: () => Navigator.pop(ctx),
                             child: Text(
-                              'Vazgeç',
+                              context.ln('give_up'),
                               style: TextStyle(
                                 color: isDark
                                     ? AppColors.darkHint
@@ -928,8 +929,8 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
                               ),
                               elevation: 4,
                             ),
-                            child: const Text(
-                              'Kaydet',
+                            child: Text(
+                              context.ln('save'),
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1,
