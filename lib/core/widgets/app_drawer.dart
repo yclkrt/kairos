@@ -45,8 +45,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.dashboard_rounded,
-                    title: 'Ana Panel',
-                    subtitle: 'Genel bakış',
+                    title: context.ln('dashboard'),
+                    subtitle: context.ln('overview'),
                     route: Routes.dashboard,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.dashboard),
@@ -59,8 +59,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.calendar_month,
-                    title: 'Antrenman Takvimi',
-                    subtitle: 'Takvim ve Hatırlatıcılar',
+                    title: context.ln('training_schedule'),
+                    subtitle: context.ln('calendar_and_reminders'),
                     route: Routes.trainingSchedule,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingSchedule),
@@ -70,8 +70,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.fitness_center_rounded,
-                    title: 'Antrenmanlarım',
-                    subtitle: 'Seanslık programlar',
+                    title: context.ln('training_plans'),
+                    subtitle: context.ln('session_based_programs'),
                     route: Routes.trainingPlans,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.trainingPlans),
@@ -81,8 +81,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.timer_outlined,
-                    title: 'Kronometre',
-                    subtitle: 'Süre takibi',
+                    title: context.ln('stopwatch'),
+                    subtitle: context.ln('time_tracking'),
                     route: Routes.stopwatch,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.stopwatch),
@@ -95,8 +95,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.sports_martial_arts,
-                    title: 'Taekwondo Skor',
-                    subtitle: 'Maç takip ve skor tablosu',
+                    title: context.ln('taekwondo_scoreboard'),
+                    subtitle: context.ln('match_tracking_and_scoreboard'),
                     route: Routes.taekwondoScoreboard,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.taekwondoScoreboard),
@@ -109,8 +109,8 @@ class AppDrawer extends ConsumerWidget {
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.sports_mma,
-                    title: 'Box Raund',
-                    subtitle: 'Raund süreleri ve dinlenme',
+                    title: context.ln('boxing_round'),
+                    subtitle: context.ln('round_durations_and_rest'),
                     route: Routes.boxingRound,
                     currentLocation: currentLocation,
                     onTap: () => _navigate(context, Routes.boxingRound),
@@ -166,12 +166,12 @@ class AppDrawer extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SPORLAB',
+                      context.ln('app_name'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -181,7 +181,7 @@ class AppDrawer extends ConsumerWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Sporcu Performans Takip',
+                      context.ln('athlete_performance_tracking'),
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 13,

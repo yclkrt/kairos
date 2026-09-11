@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/theme/app_gradients.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
@@ -49,8 +50,8 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             gradient: isDark ? AppGradients.boxingDark : AppGradients.boxing,
           ),
         ),
-        title: const Text(
-          'BOX RAUND',
+        title: Text(
+          context.ln('boxing_round'),
           style: TextStyle(
             fontWeight: FontWeight.w900,
             letterSpacing: 3,
@@ -63,10 +64,15 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             Center(
               child: Container(
                 margin: const EdgeInsets.only(right: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
                 ),
                 child: Text(
                   '${roundState.currentRound}/${roundState.totalRounds}',
@@ -87,8 +93,16 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark
-                ? [const Color(0xFF0A0A0A), const Color(0xFF1A0A0A), const Color(0xFF0D0D0D)]
-                : [const Color(0xFFFFF5F5), const Color(0xFFFFFFFF), const Color(0xFFF8F8F8)],
+                ? [
+                    const Color(0xFF0A0A0A),
+                    const Color(0xFF1A0A0A),
+                    const Color(0xFF0D0D0D),
+                  ]
+                : [
+                    const Color(0xFFFFF5F5),
+                    const Color(0xFFFFFFFF),
+                    const Color(0xFFF8F8F8),
+                  ],
           ),
         ),
         child: SafeArea(
@@ -135,7 +149,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
               Icon(statusIcon, color: statusColor, size: 20),
               const SizedBox(width: 8),
               Text(
-                state.statusText,
+                state.getStatusText(context),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
@@ -151,7 +165,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                'Raund ${state.currentRound} / ${state.totalRounds}',
+                '${context.ln('round')} ${state.currentRound} / ${state.totalRounds}',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -170,7 +184,7 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildTimerCircle(state, isDark),
+          _buildTimerCircle(state, isDark, context),
           const SizedBox(height: 24),
           _buildRoundIndicators(state, isDark),
         ],
@@ -178,12 +192,20 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
     );
   }
 
-  Widget _buildTimerCircle(BoxingRoundState state, bool isDark) {
+  Widget _buildTimerCircle(
+    BoxingRoundState state,
+    bool isDark,
+    BuildContext context,
+  ) {
     final isRunning = state.status == RoundStatus.running;
     final isResting = state.status == RoundStatus.resting;
     final progress = state.progress;
-    final primaryColor = isResting ? AppColors.workoutRest : AppColors.workoutHigh;
-    final secondaryColor = isResting ? const Color(0xFF1565C0) : const Color(0xFFC62828);
+    final primaryColor = isResting
+        ? AppColors.workoutRest
+        : AppColors.workoutHigh;
+    final secondaryColor = isResting
+        ? const Color(0xFF1565C0)
+        : const Color(0xFFC62828);
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
@@ -199,9 +221,18 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [primaryColor.withValues(alpha: 0.2), secondaryColor.withValues(alpha: 0.1)],
+                colors: [
+                  primaryColor.withValues(alpha: 0.2),
+                  secondaryColor.withValues(alpha: 0.1),
+                ],
               ),
-              boxShadow: [BoxShadow(color: primaryColor.withValues(alpha: 0.3), blurRadius: 30, spreadRadius: 5)],
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withValues(alpha: 0.3),
+                  blurRadius: 30,
+                  spreadRadius: 5,
+                ),
+              ],
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -212,7 +243,9 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: 6,
-                    backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.black.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                     strokeCap: StrokeCap.round,
                   ),
@@ -223,19 +256,45 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(isResting ? Icons.self_improvement : Icons.sports_mma, size: 32, color: primaryColor),
+                      Icon(
+                        isResting ? Icons.self_improvement : Icons.sports_mma,
+                        size: 32,
+                        color: primaryColor,
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         state.formattedTime,
-                        style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, fontFamily: 'monospace', letterSpacing: 4, color: isDark ? Colors.white : const Color(0xFF1A1A1A)),
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'monospace',
+                          letterSpacing: 4,
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A1A),
+                        ),
                       ),
                       const SizedBox(height: 4),
-                      Text(isResting ? 'DINLENME' : 'RAUND', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2, color: primaryColor)),
+                      Text(
+                        isResting ? context.ln('rest') : context.ln('round'),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 2,
+                          color: primaryColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -256,10 +315,15 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         runSpacing: 8,
         children: List.generate(state.totalRounds, (index) {
           final roundNumber = index + 1;
-          final isCompleted = roundNumber < state.currentRound &&
-              (state.status == RoundStatus.running || state.status == RoundStatus.resting || state.status == RoundStatus.finished);
-          final isCurrent = roundNumber == state.currentRound &&
-              (state.status == RoundStatus.running || state.status == RoundStatus.paused);
+          final isCompleted =
+              roundNumber < state.currentRound &&
+              (state.status == RoundStatus.running ||
+                  state.status == RoundStatus.resting ||
+                  state.status == RoundStatus.finished);
+          final isCurrent =
+              roundNumber == state.currentRound &&
+              (state.status == RoundStatus.running ||
+                  state.status == RoundStatus.paused);
           Color dotColor;
           if (isCompleted) {
             dotColor = AppColors.success;
@@ -274,8 +338,18 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: dotColor,
-              border: isCurrent ? Border.all(color: Colors.white, width: 2) : null,
-              boxShadow: isCurrent ? [BoxShadow(color: dotColor.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 2)] : null,
+              border: isCurrent
+                  ? Border.all(color: Colors.white, width: 2)
+                  : null,
+              boxShadow: isCurrent
+                  ? [
+                      BoxShadow(
+                        color: dotColor.withValues(alpha: 0.5),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ]
+                  : null,
             ),
             child: Center(
               child: isCompleted
@@ -285,7 +359,9 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: isCurrent || isCompleted ? Colors.white : (isDark ? Colors.white54 : Colors.black54),
+                        color: isCurrent || isCompleted
+                            ? Colors.white
+                            : (isDark ? Colors.white54 : Colors.black54),
                       ),
                     ),
             ),
@@ -301,44 +377,81 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (state.status == RoundStatus.idle || state.status == RoundStatus.finished)
+          if (state.status == RoundStatus.idle ||
+              state.status == RoundStatus.finished)
             GestureDetector(
-              onTap: () => ref.read(boxingRoundProvider.notifier).startWorkout(),
+              onTap: () =>
+                  ref.read(boxingRoundProvider.notifier).startWorkout(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFFE84C3D), Color(0xFFC62828)]),
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [BoxShadow(color: const Color(0xFFE84C3D).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 8))],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 48,
+                  vertical: 14,
                 ),
-                child: const Row(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE84C3D), Color(0xFFC62828)],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFE84C3D).withValues(alpha: 0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
+                    Icon(
+                      Icons.play_arrow_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                     SizedBox(width: 8),
-                    Text('BAŞLAT', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white)),
+                    Text(
+                      context.ln('start').toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             )
           else ...[
             GestureDetector(
-              onTap: () => ref.read(boxingRoundProvider.notifier).resetWorkout(),
+              onTap: () =>
+                  ref.read(boxingRoundProvider.notifier).resetWorkout(),
               child: Container(
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.2)),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.1),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.2),
+                  ),
                 ),
-                child: Icon(Icons.stop_rounded, color: isDark ? Colors.white54 : Colors.black54, size: 24),
+                child: Icon(
+                  Icons.stop_rounded,
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  size: 24,
+                ),
               ),
             ),
             const SizedBox(width: 20),
             GestureDetector(
               onTap: () {
-                if (state.status == RoundStatus.running || state.status == RoundStatus.resting) {
+                if (state.status == RoundStatus.running ||
+                    state.status == RoundStatus.resting) {
                   ref.read(boxingRoundProvider.notifier).pauseTimer();
                 } else if (state.status == RoundStatus.paused) {
                   ref.read(boxingRoundProvider.notifier).startWorkout();
@@ -356,13 +469,23 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: (state.status == RoundStatus.paused ? const Color(0xFF2ECC71) : const Color(0xFFE84C3D)).withValues(alpha: 0.4),
+                      color:
+                          (state.status == RoundStatus.paused
+                                  ? const Color(0xFF2ECC71)
+                                  : const Color(0xFFE84C3D))
+                              .withValues(alpha: 0.4),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
                   ],
                 ),
-                child: Icon(state.status == RoundStatus.paused ? Icons.play_arrow_rounded : Icons.pause_rounded, color: Colors.white, size: 36),
+                child: Icon(
+                  state.status == RoundStatus.paused
+                      ? Icons.play_arrow_rounded
+                      : Icons.pause_rounded,
+                  color: Colors.white,
+                  size: 36,
+                ),
               ),
             ),
             const SizedBox(width: 20),
@@ -373,10 +496,20 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.2)),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.1),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.2),
+                  ),
                 ),
-                child: Icon(Icons.skip_next_rounded, color: isDark ? Colors.white54 : Colors.black54, size: 24),
+                child: Icon(
+                  Icons.skip_next_rounded,
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  size: 24,
+                ),
               ),
             ),
           ],
@@ -391,51 +524,90 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
     final roundSeconds = state.roundDurationSeconds % 60;
     String roundTimeText;
     if (roundSeconds == 0) {
-      roundTimeText = '$roundMinutes dakika';
+      roundTimeText = '$roundMinutes ${context.ln('minute')}';
     } else {
-      roundTimeText = '$roundMinutes dk $roundSeconds sn';
+      roundTimeText =
+          '$roundMinutes ${context.ln('min')} $roundSeconds ${context.ln('sec')}';
     }
-    final restTimeText = '${state.restDurationSeconds} saniye';
+    final restTimeText = '${state.restDurationSeconds} ${context.ln('second')}';
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.black.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('AYARLAR', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 3, color: isDark ? Colors.white38 : Colors.black38)),
+          Text(
+            context.ln('settings').toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 3,
+              color: isDark ? Colors.white38 : Colors.black38,
+            ),
+          ),
           const SizedBox(height: 12),
           _buildSettingRow(
             icon: Icons.format_list_numbered_rounded,
-            label: 'Raund Sayısı',
-            value: '${state.totalRounds} raund',
+            label: context.ln('number_of_rounds'),
+            value: '${state.totalRounds} ${context.ln('round').toLowerCase()}',
             isEditable: isEditable,
-            onDecrement: state.totalRounds > 1 ? () => ref.read(boxingRoundProvider.notifier).updateTotalRounds(state.totalRounds - 1) : null,
-            onIncrement: state.totalRounds < 12 ? () => ref.read(boxingRoundProvider.notifier).updateTotalRounds(state.totalRounds + 1) : null,
+            onDecrement: state.totalRounds > 1
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateTotalRounds(state.totalRounds - 1)
+                : null,
+            onIncrement: state.totalRounds < 12
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateTotalRounds(state.totalRounds + 1)
+                : null,
             isDark: isDark,
           ),
           const SizedBox(height: 10),
           _buildSettingRow(
             icon: Icons.timer_outlined,
-            label: 'Raund Süresi',
+            label: context.ln('round_duration'),
             value: roundTimeText,
             isEditable: isEditable,
-            onDecrement: state.roundDurationSeconds > 30 ? () => ref.read(boxingRoundProvider.notifier).updateRoundDuration(state.roundDurationSeconds - 30) : null,
-            onIncrement: state.roundDurationSeconds < 600 ? () => ref.read(boxingRoundProvider.notifier).updateRoundDuration(state.roundDurationSeconds + 30) : null,
+            onDecrement: state.roundDurationSeconds > 30
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateRoundDuration(state.roundDurationSeconds - 30)
+                : null,
+            onIncrement: state.roundDurationSeconds < 600
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateRoundDuration(state.roundDurationSeconds + 30)
+                : null,
             isDark: isDark,
           ),
           const SizedBox(height: 10),
           _buildSettingRow(
             icon: Icons.self_improvement,
-            label: 'Dinlenme Süresi',
+            label: context.ln('rest_period'),
             value: restTimeText,
             isEditable: isEditable,
-            onDecrement: state.restDurationSeconds > 10 ? () => ref.read(boxingRoundProvider.notifier).updateRestDuration(state.restDurationSeconds - 10) : null,
-            onIncrement: state.restDurationSeconds < 120 ? () => ref.read(boxingRoundProvider.notifier).updateRestDuration(state.restDurationSeconds + 10) : null,
+            onDecrement: state.restDurationSeconds > 10
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateRestDuration(state.restDurationSeconds - 10)
+                : null,
+            onIncrement: state.restDurationSeconds < 120
+                ? () => ref
+                      .read(boxingRoundProvider.notifier)
+                      .updateRestDuration(state.restDurationSeconds + 10)
+                : null,
             isDark: isDark,
           ),
         ],
@@ -458,7 +630,12 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [const Color(0xFFE84C3D).withValues(alpha: 0.2), const Color(0xFFC62828).withValues(alpha: 0.1)]),
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFFE84C3D).withValues(alpha: 0.2),
+                const Color(0xFFC62828).withValues(alpha: 0.1),
+              ],
+            ),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: const Color(0xFFE84C3D), size: 18),
@@ -468,13 +645,30 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
-              Text(value, style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38)),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                ),
+              ),
             ],
           ),
         ),
         if (isEditable) ...[
-          _buildStepButton(icon: Icons.remove, onTap: onDecrement, isDark: isDark),
+          _buildStepButton(
+            icon: Icons.remove,
+            onTap: onDecrement,
+            isDark: isDark,
+          ),
           const SizedBox(width: 6),
           _buildStepButton(icon: Icons.add, onTap: onIncrement, isDark: isDark),
         ],
@@ -482,7 +676,11 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
     );
   }
 
-  Widget _buildStepButton({required IconData icon, required VoidCallback? onTap, required bool isDark}) {
+  Widget _buildStepButton({
+    required IconData icon,
+    required VoidCallback? onTap,
+    required bool isDark,
+  }) {
     final isEnabled = onTap != null;
     return GestureDetector(
       onTap: onTap,
@@ -492,15 +690,29 @@ class _BoxingRoundPageState extends ConsumerState<BoxingRoundPage>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isEnabled
-              ? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05))
-              : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02)),
+              ? (isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05))
+              : (isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : Colors.black.withValues(alpha: 0.02)),
           border: Border.all(
             color: isEnabled
-                ? (isDark ? Colors.white.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.1))
-                : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                ? (isDark
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : Colors.black.withValues(alpha: 0.1))
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.05)),
           ),
         ),
-        child: Icon(icon, size: 16, color: isEnabled ? (isDark ? Colors.white70 : Colors.black54) : (isDark ? Colors.white24 : Colors.black26)),
+        child: Icon(
+          icon,
+          size: 16,
+          color: isEnabled
+              ? (isDark ? Colors.white70 : Colors.black54)
+              : (isDark ? Colors.white24 : Colors.black26),
+        ),
       ),
     );
   }

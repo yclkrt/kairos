@@ -15,6 +15,7 @@ class StepData {
   final bool hasPermission;
   final bool isLoading;
   final String? errorMessage;
+  final String? errorKey; // localization key for UI translation
   final Map<String, int> weeklySteps; // e.g. {"Pzt": 6200, "Sal": 8400, ...}
 
   const StepData({
@@ -25,6 +26,7 @@ class StepData {
     this.hasPermission = true,
     this.isLoading = false,
     this.errorMessage,
+    this.errorKey,
     this.weeklySteps = const {},
   });
 
@@ -82,6 +84,7 @@ class StepData {
     bool? hasPermission,
     bool? isLoading,
     String? errorMessage,
+    String? errorKey,
     Map<String, int>? weeklySteps,
   }) {
     return StepData(
@@ -92,6 +95,7 @@ class StepData {
       hasPermission: hasPermission ?? this.hasPermission,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
+      errorKey: errorKey,
       weeklySteps: weeklySteps ?? this.weeklySteps,
     );
   }

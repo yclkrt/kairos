@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 
 enum RoundStatus { idle, running, paused, resting, finished }
 
@@ -62,24 +64,25 @@ class BoxingRoundState {
   }
 
   double get progress {
-    final totalSeconds =
-        status == RoundStatus.resting ? restDurationSeconds : roundDurationSeconds;
+    final totalSeconds = status == RoundStatus.resting
+        ? restDurationSeconds
+        : roundDurationSeconds;
     if (totalSeconds == 0) return 0;
     return 1 - (remainingSeconds / totalSeconds);
   }
 
-  String get statusText {
+  String getStatusText(BuildContext context) {
     switch (status) {
       case RoundStatus.idle:
-        return 'HAZIR';
+        return context.ln('ready').toUpperCase();
       case RoundStatus.running:
-        return 'RAUND $currentRound';
+        return '${context.ln('round')} $currentRound'.toUpperCase();
       case RoundStatus.paused:
-        return 'DURAKLATILDI';
+        return context.ln('paused').toUpperCase();
       case RoundStatus.resting:
-        return 'DINLENME';
+        return context.ln('rest').toUpperCase();
       case RoundStatus.finished:
-        return 'TAMAMLANDI!';
+        return context.ln('finished').toUpperCase();
     }
   }
 }
@@ -130,7 +133,8 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
 
   void startWorkout() {
     _autoResetTimer?.cancel();
-    if (state.status == RoundStatus.idle || state.status == RoundStatus.finished) {
+    if (state.status == RoundStatus.idle ||
+        state.status == RoundStatus.finished) {
       _startRound();
     } else if (state.status == RoundStatus.paused) {
       _resumeTimer();
@@ -198,7 +202,8 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
   }
 
   void pauseTimer() {
-    if (state.status == RoundStatus.running || state.status == RoundStatus.resting) {
+    if (state.status == RoundStatus.running ||
+        state.status == RoundStatus.resting) {
       _timer?.cancel();
       state = state.copyWith(status: RoundStatus.paused);
     }
@@ -206,7 +211,8 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
 
   void _resumeTimer() {
     if (state.status == RoundStatus.paused) {
-      final wasResting = state.remainingSeconds <= state.restDurationSeconds &&
+      final wasResting =
+          state.remainingSeconds <= state.restDurationSeconds &&
           state.currentRound < state.totalRounds;
       state = state.copyWith(
         status: wasResting ? RoundStatus.resting : RoundStatus.running,
@@ -222,7 +228,8 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
   }
 
   void skipToNext() {
-    if (state.status == RoundStatus.running || state.status == RoundStatus.resting) {
+    if (state.status == RoundStatus.running ||
+        state.status == RoundStatus.resting) {
       _timer?.cancel();
       _onTimerComplete();
     }
@@ -239,5 +246,5 @@ class BoxingRoundNotifier extends StateNotifier<BoxingRoundState> {
 
 final boxingRoundProvider =
     StateNotifierProvider<BoxingRoundNotifier, BoxingRoundState>((ref) {
-  return BoxingRoundNotifier();
-});
+      return BoxingRoundNotifier();
+    });

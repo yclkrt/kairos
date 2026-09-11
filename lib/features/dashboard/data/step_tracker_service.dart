@@ -40,7 +40,7 @@ class StepTrackerService {
         _currentData.copyWith(
           hasPermission: false,
           isLoading: false,
-          errorMessage: 'Adım takibi için hareket sensörü izni gereklidir.',
+          errorKey: 'motion_sensor_permission_is_required_for_step_tracking',
         ),
       );
     }
@@ -100,7 +100,7 @@ class StepTrackerService {
         _currentData.copyWith(
           isSensorAvailable: false,
           isLoading: false,
-          errorMessage: 'Cihazda adım sensörü bulunamadı veya erişilemedi.',
+          errorKey: 'a_step_sensor_could_not_be_found_or_accessed_on_the_device',
         ),
       );
     }
