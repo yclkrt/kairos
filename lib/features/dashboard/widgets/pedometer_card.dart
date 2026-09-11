@@ -28,6 +28,13 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
     _pulseAnimation = Tween<double>(begin: 0.85, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    // Initialize the step tracker service with context for localization
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(stepTrackerProvider.notifier).initialize(context);
+      }
+    });
   }
 
   @override
@@ -341,7 +348,7 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
           ),
           TextButton(
             onPressed: () =>
-                ref.read(stepTrackerProvider.notifier).retryPermission(),
+                ref.read(stepTrackerProvider.notifier).retryPermission(context),
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               backgroundColor: AppColors.warning,

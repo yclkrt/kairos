@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,8 +25,38 @@ class StepTrackerService {
   StepData _currentData = const StepData(isLoading: true);
   StepData get currentData => _currentData;
 
+  // Localized error messages (set during initialize)
+  String _localizedPermissionError = '';
+  String _localizedSensorNotFoundError = '';
+  String _localizedSensorDataError = '';
+
+  // Localized day names (set during initialize)
+  List<String> _localizedDaysShort = [];
+
   /// Servisi başlat
-  Future<void> initialize() async {
+  Future<void> initialize(BuildContext context) async {
+    // Localize error messages and day names before async operations
+    _localizedPermissionError = context.ln(
+      'motion_sensor_permission_is_required_for_step_tracking',
+    );
+    _localizedSensorNotFoundError = context.ln(
+      'a_step_sensor_could_not_be_found_or_accessed_on_the_device',
+    );
+    _localizedSensorDataError = context.ln(
+      'step_sensor_data_cannot_be_read',
+    );
+
+    // Localize day names (Monday first, Sunday last)
+    _localizedDaysShort = [
+      context.ln('mon'),
+      context.ln('tue'),
+      context.ln('wed'),
+      context.ln('thu'),
+      context.ln('fri'),
+      context.ln('sat'),
+      context.ln('sun'),
+    ];
+
     _emitUpdate(_currentData.copyWith(isLoading: true));
 
     // 1. Önbellekteki verileri hemen yükle
@@ -40,7 +71,7 @@ class StepTrackerService {
         _currentData.copyWith(
           hasPermission: false,
           isLoading: false,
-          errorKey: 'motion_sensor_permission_is_required_for_step_tracking',
+          errorKey: _localizedPermissionError,
         ),
       );
     }
@@ -100,7 +131,7 @@ class StepTrackerService {
         _currentData.copyWith(
           isSensorAvailable: false,
           isLoading: false,
-          errorKey: 'a_step_sensor_could_not_be_found_or_accessed_on_the_device',
+          errorKey: _localizedSensorNotFoundError,
         ),
       );
     }
@@ -200,7 +231,7 @@ class StepTrackerService {
       _currentData.copyWith(
         isSensorAvailable: false,
         isLoading: false,
-        errorMessage: 'Adım sensörü verisi alınamıyor.',
+        errorKey: _localizedSensorDataError,
       ),
     );
   }
@@ -245,12 +276,11 @@ class StepTrackerService {
     int todaySteps,
   ) async {
     final Map<String, int> result = {};
-    const daysShort = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
     for (int i = 6; i >= 0; i--) {
       final date = now.subtract(Duration(days: i));
       final dateKey = _formatDateKey(date);
-      final dayName = daysShort[date.weekday - 1];
+      final dayName = _localizedDaysShort[date.weekday - 1];
 
       if (i == 0) {
         result[dayName] = todaySteps;

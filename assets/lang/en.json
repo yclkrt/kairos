@@ -27,5 +27,13 @@
     "paused": "Paused",
     "finished": "Finished!",
     "motion_sensor_permission_is_required_for_step_tracking": "Motion sensor permission is required for step tracking.",
-    "a_step_sensor_could_not_be_found_or_accessed_on_the_device": "A step sensor could not be found or accessed on the device."
+    "a_step_sensor_could_not_be_found_or_accessed_on_the_device": "A step sensor could not be found or accessed on the device.",
+    "step_sensor_data_cannot_be_read": "Step sensor data cannot be read.",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
 }

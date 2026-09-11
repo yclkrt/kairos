@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:sporlab/features/dashboard/data/step_tracker_service.dart';
@@ -15,16 +16,18 @@ final stepTrackerServiceProvider = Provider<StepTrackerService>((ref) {
 class StepTrackerNotifier extends StateNotifier<StepData> {
   final StepTrackerService _service;
   StreamSubscription<StepData>? _subscription;
+  bool _isInitialized = false;
 
-  StepTrackerNotifier(this._service) : super(const StepData(isLoading: true)) {
-    _init();
-  }
+  StepTrackerNotifier(this._service) : super(const StepData(isLoading: true));
 
-  void _init() {
+  void initialize(BuildContext context) {
+    if (_isInitialized) return;
+    _isInitialized = true;
+    
     _subscription = _service.stepDataStream.listen((data) {
       state = data;
     });
-    _service.initialize();
+    _service.initialize(context);
   }
 
   /// Hedefi güncelle (örn. 6000, 10000 adım)
@@ -33,10 +36,10 @@ class StepTrackerNotifier extends StateNotifier<StepData> {
   }
 
   /// İzni tekrar kontrol et ve başlat
-  Future<void> retryPermission() async {
+  Future<void> retryPermission(BuildContext context) async {
     final granted = await _service.checkAndRequestPermission();
-    if (granted) {
-      await _service.initialize();
+    if (granted && context.mounted) {
+      await _service.initialize(context);
     }
   }
 

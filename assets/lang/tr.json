@@ -28,5 +28,13 @@
     "paused": "Duraklatıldı",
     "finished": "Tamamlandı!",
     "motion_sensor_permission_is_required_for_step_tracking": "Adım takibi için hareket sensörü izni gereklidir.",
-    "a_step_sensor_could_not_be_found_or_accessed_on_the_device": "Cihazda adım sensörü bulunamadı veya erişilemedi."
+    "a_step_sensor_could_not_be_found_or_accessed_on_the_device": "Cihazda adım sensörü bulunamadı veya erişilemedi.",
+    "step_sensor_data_cannot_be_read": "Adım sensörü verisi alınamıyor.",
+    "mon": "Pzt",
+    "tue": "Sal",
+    "wed": "Çar",
+    "thu": "Per",
+    "fri": "Cum",
+    "sat": "Cmt",
+    "sun": "Paz"
 }
