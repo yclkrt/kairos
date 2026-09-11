@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/features/stopwatch/providers/stopwatch_provider.dart';
 
 class StopWatchButtons extends ConsumerWidget {
@@ -21,7 +22,7 @@ class StopWatchButtons extends ConsumerWidget {
         if (!isRunning && !isPaused)
           _GradientButton(
             icon: Icons.play_arrow_rounded,
-            label: 'BAŞLAT',
+            label: context.ln('start').toUpperCase(),
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -36,7 +37,7 @@ class StopWatchButtons extends ConsumerWidget {
         if (isRunning && !isPaused)
           _GradientButton(
             icon: Icons.pause_rounded,
-            label: 'DURAKLAT',
+            label: context.ln('pause').toUpperCase(),
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -51,7 +52,7 @@ class StopWatchButtons extends ConsumerWidget {
         if (isRunning && isPaused)
           _GradientButton(
             icon: Icons.play_arrow_rounded,
-            label: 'DEVAM ET',
+            label: context.ln('continue').toUpperCase(),
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

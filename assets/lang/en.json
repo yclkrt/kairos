@@ -83,5 +83,7 @@
     "the_best": "The Best",
     "the_worst": "The Worst",
     "lap_duration": "Lap Duration",
-    "total": "Total"
+    "total": "Total",
+    "pause": "Pause",
+    "continue": "Continue"
 }

@@ -84,5 +84,7 @@
     "the_best": "En İyi",
     "the_worst": "En Kötü",
     "lap_duration": "Tur Süresi",
-    "total": "Toplam"
+    "total": "Toplam",
+    "pause": "Duraklat",
+    "continue": "Devam Et"
 }
