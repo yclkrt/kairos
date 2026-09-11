@@ -18,6 +18,15 @@ class StepData {
   final String? errorKey; // localization key for UI translation
   final Map<String, int> weeklySteps; // e.g. {"Pzt": 6200, "Sal": 8400, ...}
 
+  // Localized status texts
+  final String statusWalkingText;
+  final String statusStoppedText;
+  final String statusUnknownText;
+
+  // Localized time unit texts
+  final String hourShortText;
+  final String minuteShortText;
+
   const StepData({
     this.todaySteps = 0,
     this.stepGoal = 8000,
@@ -28,6 +37,11 @@ class StepData {
     this.errorMessage,
     this.errorKey,
     this.weeklySteps = const {},
+    this.statusWalkingText = 'Hareket Halinde',
+    this.statusStoppedText = 'Hareketsiz',
+    this.statusUnknownText = 'Bekleniyor',
+    this.hourShortText = 's',
+    this.minuteShortText = 'dk',
   });
 
   /// İlerleme yüzdesi (0.0 - 1.0 arasında)
@@ -48,14 +62,14 @@ class StepData {
   /// Aktif süre tahmini (dakika cinsinden, ~100 adım/dk)
   int get activeMinutes => (todaySteps / 100).round();
 
-  /// Aktif süre gösterimi (örn: "42 dk" veya "1s 15dk")
+  /// Aktif süre gösterimi (lokalize, örn: "42 dk" veya "1s 15dk" / "1h 15min")
   String get activeTimeDisplay {
     if (activeMinutes < 60) {
-      return '$activeMinutes dk';
+      return '$activeMinutes $minuteShortText';
     }
     final hours = activeMinutes ~/ 60;
     final mins = activeMinutes % 60;
-    return '${hours}s ${mins}dk';
+    return '$hours$hourShortText $mins$minuteShortText';
   }
 
   /// Hedefe kalan adım sayısı
@@ -64,15 +78,15 @@ class StepData {
   /// Hedefe ulaşıldı mı
   bool get isGoalReached => todaySteps >= stepGoal;
 
-  /// Durum metni (Türkçe)
+  /// Durum metni (lokalize)
   String get statusText {
     switch (status) {
       case StepStatus.walking:
-        return 'Hareket Halinde';
+        return statusWalkingText;
       case StepStatus.stopped:
-        return 'Hareketsiz';
+        return statusStoppedText;
       case StepStatus.unknown:
-        return 'Bekleniyor';
+        return statusUnknownText;
     }
   }
 
@@ -86,6 +100,11 @@ class StepData {
     String? errorMessage,
     String? errorKey,
     Map<String, int>? weeklySteps,
+    String? statusWalkingText,
+    String? statusStoppedText,
+    String? statusUnknownText,
+    String? hourShortText,
+    String? minuteShortText,
   }) {
     return StepData(
       todaySteps: todaySteps ?? this.todaySteps,
@@ -97,6 +116,11 @@ class StepData {
       errorMessage: errorMessage,
       errorKey: errorKey,
       weeklySteps: weeklySteps ?? this.weeklySteps,
+      statusWalkingText: statusWalkingText ?? this.statusWalkingText,
+      statusStoppedText: statusStoppedText ?? this.statusStoppedText,
+      statusUnknownText: statusUnknownText ?? this.statusUnknownText,
+      hourShortText: hourShortText ?? this.hourShortText,
+      minuteShortText: minuteShortText ?? this.minuteShortText,
     );
   }
 }

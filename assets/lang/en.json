@@ -35,5 +35,10 @@
     "thu": "Thu",
     "fri": "Fri",
     "sat": "Sat",
-    "sun": "Sun"
+    "sun": "Sun",
+    "status_walking": "Walking",
+    "status_stopped": "Stopped",
+    "status_unknown": "Waiting",
+    "hour_short": "h",
+    "minute_short": "min"
 }

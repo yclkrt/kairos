@@ -36,5 +36,10 @@
     "thu": "Per",
     "fri": "Cum",
     "sat": "Cmt",
-    "sun": "Paz"
+    "sun": "Paz",
+    "status_walking": "Hareket Halinde",
+    "status_stopped": "Hareketsiz",
+    "status_unknown": "Bekleniyor",
+    "hour_short": "sa",
+    "minute_short": "dk"
 }

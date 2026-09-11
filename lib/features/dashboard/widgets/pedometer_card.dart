@@ -45,6 +45,9 @@ class _PedometerCardState extends ConsumerState<PedometerCard>
 
   @override
   Widget build(BuildContext context) {
+    // Dil değişikliğini algıla ve lokalizasyonu güncelle
+    ref.read(stepTrackerProvider.notifier).changeLanguage(context);
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final stepData = ref.watch(stepTrackerProvider);
 

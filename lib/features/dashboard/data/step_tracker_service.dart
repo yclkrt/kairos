@@ -33,6 +33,15 @@ class StepTrackerService {
   // Localized day names (set during initialize)
   List<String> _localizedDaysShort = [];
 
+  // Localized status texts (set during initialize)
+  String _localizedStatusWalking = '';
+  String _localizedStatusStopped = '';
+  String _localizedStatusUnknown = '';
+
+  // Localized time unit texts (set during initialize)
+  String _localizedHourShort = '';
+  String _localizedMinuteShort = '';
+
   /// Servisi başlat
   Future<void> initialize(BuildContext context) async {
     // Localize error messages and day names before async operations
@@ -56,6 +65,15 @@ class StepTrackerService {
       context.ln('sat'),
       context.ln('sun'),
     ];
+
+    // Localize status texts
+    _localizedStatusWalking = context.ln('status_walking');
+    _localizedStatusStopped = context.ln('status_stopped');
+    _localizedStatusUnknown = context.ln('status_unknown');
+
+    // Localize time unit texts
+    _localizedHourShort = context.ln('hour_short');
+    _localizedMinuteShort = context.ln('minute_short');
 
     _emitUpdate(_currentData.copyWith(isLoading: true));
 
@@ -331,10 +349,58 @@ class StepTrackerService {
     _emitUpdate(_currentData.copyWith(todaySteps: 0, weeklySteps: weekly));
   }
 
+  /// Dil değiştiğinde lokalizasyonu güncelle
+  void changeLanguage(BuildContext context) {
+    // Hata mesajlarını güncelle
+    _localizedPermissionError = context.ln(
+      'motion_sensor_permission_is_required_for_step_tracking',
+    );
+    _localizedSensorNotFoundError = context.ln(
+      'a_step_sensor_could_not_be_found_or_accessed_on_the_device',
+    );
+    _localizedSensorDataError = context.ln(
+      'step_sensor_data_cannot_be_read',
+    );
+
+    // Gün isimlerini güncelle
+    _localizedDaysShort = [
+      context.ln('mon'),
+      context.ln('tue'),
+      context.ln('wed'),
+      context.ln('thu'),
+      context.ln('fri'),
+      context.ln('sat'),
+      context.ln('sun'),
+    ];
+
+    // Durum metinlerini güncelle
+    _localizedStatusWalking = context.ln('status_walking');
+    _localizedStatusStopped = context.ln('status_stopped');
+    _localizedStatusUnknown = context.ln('status_unknown');
+
+    // Zaman birimi metinlerini güncelle
+    _localizedHourShort = context.ln('hour_short');
+    _localizedMinuteShort = context.ln('minute_short');
+
+    // Mevcut veriyi güncelle ve yeniden gönder
+    _emitUpdate(_currentData);
+  }
+
+  /// StepData'ya lokalize edilmiş metinleri ekle
+  StepData _withLocalizedTexts(StepData data) {
+    return data.copyWith(
+      statusWalkingText: _localizedStatusWalking,
+      statusStoppedText: _localizedStatusStopped,
+      statusUnknownText: _localizedStatusUnknown,
+      hourShortText: _localizedHourShort,
+      minuteShortText: _localizedMinuteShort,
+    );
+  }
+
   void _emitUpdate(StepData data) {
-    _currentData = data;
+    _currentData = _withLocalizedTexts(data);
     if (!_stepDataController.isClosed) {
-      _stepDataController.add(data);
+      _stepDataController.add(_currentData);
     }
   }
 

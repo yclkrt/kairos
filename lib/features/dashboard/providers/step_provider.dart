@@ -23,11 +23,16 @@ class StepTrackerNotifier extends StateNotifier<StepData> {
   void initialize(BuildContext context) {
     if (_isInitialized) return;
     _isInitialized = true;
-    
+
     _subscription = _service.stepDataStream.listen((data) {
       state = data;
     });
     _service.initialize(context);
+  }
+
+  /// Dil değiştiğinde lokalizasyonu güncelle
+  void changeLanguage(BuildContext context) {
+    _service.changeLanguage(context);
   }
 
   /// Hedefi güncelle (örn. 6000, 10000 adım)
