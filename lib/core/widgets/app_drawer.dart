@@ -403,95 +403,220 @@ class AppDrawer extends ConsumerWidget {
 
   Widget _buildLanguageSelector(BuildContext context, bool isDark) {
     final currentLocale = context.currentLocale;
+    final isTr = currentLocale == 'tr';
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+    // Active language accent color
+    const trColor = Color(0xFFE63946); // kırmızı — TR
+    const enColor = Color(0xFF4361EE); // mavi — EN
+    final activeColor = isTr ? trColor : enColor;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.1),
-            width: 1,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [const Color(0xFF141428), const Color(0xFF0E0E1E)]
+                : [const Color(0xFFF5F5FF), const Color(0xFFECECF8)],
           ),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: activeColor.withValues(alpha: isDark ? 0.35 : 0.2),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: activeColor.withValues(alpha: isDark ? 0.18 : 0.10),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF42A5F5), Color(0xFF1E88E5)],
+            // ── Header row ─────────────────────────────────────────
+            Container(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: activeColor.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  // Globe icon with active-color glow
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: isTr
+                            ? [const Color(0xFFE63946), const Color(0xFFC1121F)]
+                            : [
+                                const Color(0xFF4361EE),
+                                const Color(0xFF3A0CA3),
+                              ],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: activeColor.withValues(alpha: 0.45),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    child: const Icon(
+                      Icons.translate_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.language_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'DİL',
-                        style: TextStyle(
-                          color: isDark ? Colors.white : AppColors.lightText,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                  const SizedBox(width: 12),
+                  // Label + active locale chip
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          'DİL',
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1A1A2E),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.4,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        currentLocale == 'tr' ? 'Türkçe' : 'English',
-                        style: TextStyle(
-                          color: isDark ? AppColors.darkHint : AppColors.lightHint,
-                          fontSize: 11,
+                        const SizedBox(width: 8),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: activeColor,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            currentLocale.toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  // Current flag large
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, anim) =>
+                        ScaleTransition(scale: anim, child: child),
+                    child: Text(
+                      isTr ? '🇹🇷' : '🇬🇧',
+                      key: ValueKey(currentLocale),
+                      style: const TextStyle(fontSize: 22),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildLanguageOption(
-                    context: context,
-                    flag: '🇹🇷',
-                    label: 'Türkçe',
-                    locale: 'tr',
-                    isSelected: currentLocale == 'tr',
-                    isDark: isDark,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildLanguageOption(
-                    context: context,
-                    flag: '🇬🇧',
-                    label: 'English',
-                    locale: 'en',
-                    isSelected: currentLocale == 'en',
-                    isDark: isDark,
-                  ),
-                ),
-              ],
+
+            // ── Toggle strip ────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final halfW = (constraints.maxWidth - 6) / 2;
+                  return Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.35)
+                          : Colors.white.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.06)
+                            : Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        // Sliding pill indicator
+                        AnimatedPositioned(
+                          duration: const Duration(milliseconds: 280),
+                          curve: Curves.easeOutBack,
+                          left: isTr ? 3 : halfW + 3,
+                          top: 3,
+                          bottom: 3,
+                          width: halfW,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: isTr
+                                    ? [
+                                        const Color(0xFFE63946),
+                                        const Color(0xFFC1121F),
+                                      ]
+                                    : [
+                                        const Color(0xFF4361EE),
+                                        const Color(0xFF3A0CA3),
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(9),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: activeColor.withValues(alpha: 0.5),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Two language buttons overlay
+                        Row(
+                          children: [
+                            _buildLangTab(
+                              context: context,
+                              flag: '🇹🇷',
+                              code: 'TR',
+                              name: 'Türkçe',
+                              locale: 'tr',
+                              isSelected: isTr,
+                              isDark: isDark,
+                            ),
+                            _buildLangTab(
+                              context: context,
+                              flag: '🇬🇧',
+                              code: 'EN',
+                              name: 'English',
+                              locale: 'en',
+                              isSelected: !isTr,
+                              isDark: isDark,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -499,61 +624,65 @@ class AppDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildLanguageOption({
+  Widget _buildLangTab({
     required BuildContext context,
     required String flag,
-    required String label,
+    required String code,
+    required String name,
     required String locale,
     required bool isSelected,
     required bool isDark,
   }) {
-    return GestureDetector(
-      onTap: () {
-        if (!isSelected) {
-          context.setLocale(locale);
-          Navigator.pop(context);
-        }
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark
-                  ? const Color(0xFF1E88E5).withValues(alpha: 0.2)
-                  : const Color(0xFF1E88E5).withValues(alpha: 0.1))
-              : (isDark
-                  ? Colors.white.withValues(alpha: 0.03)
-                  : Colors.black.withValues(alpha: 0.03)),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected
-                ? const Color(0xFF1E88E5)
-                : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.08)),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(flag, style: const TextStyle(fontSize: 18)),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: isSelected
-                      ? (isDark ? const Color(0xFF64B5F6) : const Color(0xFF1565C0))
-                      : (isDark ? AppColors.darkHint : AppColors.lightHint),
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                ),
-                overflow: TextOverflow.ellipsis,
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (!isSelected) {
+            context.setLocale(locale);
+            Navigator.pop(context);
+          }
+        },
+        child: SizedBox(
+          height: 48,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(flag, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    code,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : Colors.black.withValues(alpha: 0.35)),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white.withValues(alpha: 0.75)
+                          : (isDark
+                                ? Colors.white.withValues(alpha: 0.25)
+                                : Colors.black.withValues(alpha: 0.25)),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
