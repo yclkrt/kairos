@@ -13,7 +13,7 @@ class IsarService {
     _isar = await Isar.open(
       [TrainingPlanCollectionSchema], // Schemaları doğrudan ver
       directory: dir.path,
-      name: 'kairos_training_plans',
+      name: 'sporlab_training_plans',
     );
     return _isar!;
   }

@@ -7,13 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sporlab/features/dashboard/model/step_data.dart';
 
 class StepTrackerService {
-  static const String _keyStepGoal = 'kairos_step_goal';
-  static const String _keyLastDate = 'kairos_step_last_date';
-  static const String _keyBaselineSteps = 'kairos_step_baseline';
-  static const String _keyRebootAccumulated = 'kairos_step_reboot_accumulated';
-  static const String _keyLastRawSensorSteps = 'kairos_step_last_raw_sensor';
-  static const String _keyTodaySteps = 'kairos_step_today_steps';
-  static const String _keyHistoryPrefix = 'kairos_step_history_';
+  static const String _keyStepGoal = 'sporlab_step_goal';
+  static const String _keyLastDate = 'sporlab_step_last_date';
+  static const String _keyBaselineSteps = 'sporlab_step_baseline';
+  static const String _keyRebootAccumulated = 'sporlab_step_reboot_accumulated';
+  static const String _keyLastRawSensorSteps = 'sporlab_step_last_raw_sensor';
+  static const String _keyTodaySteps = 'sporlab_step_today_steps';
+  static const String _keyHistoryPrefix = 'sporlab_step_history_';
 
   StreamSubscription<StepCount>? _stepCountSubscription;
   StreamSubscription<PedestrianStatus>? _pedestrianStatusSubscription;

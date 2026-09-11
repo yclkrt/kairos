@@ -167,7 +167,7 @@ class AppDrawer extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'KAIROS',
+                      'SPORLAB',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
