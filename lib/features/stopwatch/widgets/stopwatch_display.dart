@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:lingo_easy/lingo_easy.dart';
+
 class StopWatchDisplay extends StatelessWidget {
   final String time;
   final bool isRunning;
@@ -20,8 +22,8 @@ class StopWatchDisplay extends StatelessWidget {
     final primaryColor = isRunning
         ? const Color(0xFF00E676)
         : isPaused
-            ? const Color(0xFFFFAB00)
-            : const Color(0xFFE84C3D);
+        ? const Color(0xFFFFAB00)
+        : const Color(0xFFE84C3D);
 
     return Container(
       width: 310,
@@ -215,7 +217,7 @@ class StopWatchDisplay extends StatelessWidget {
 
               if (!isRunning && !isPaused)
                 Text(
-                  'HAZIR',
+                  context.ln('ready').toUpperCase(),
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -226,7 +228,7 @@ class StopWatchDisplay extends StatelessWidget {
 
               if (isPaused)
                 Text(
-                  'DURAKLATILDI',
+                  context.ln('stopped').toUpperCase(),
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,

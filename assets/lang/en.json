@@ -85,5 +85,6 @@
     "lap_duration": "Lap Duration",
     "total": "Total",
     "pause": "Pause",
-    "continue": "Continue"
+    "continue": "Continue",
+    "stopped": "Stopped"
 }
