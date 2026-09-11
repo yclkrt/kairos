@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/providers/theme_provider.dart';
 import 'package:sporlab/core/router/app_router.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
@@ -38,6 +39,9 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 children: [
                   _buildThemeSwitch(context, ref, isDark),
+                  const SizedBox(height: 8),
+                  _buildLanguageSelector(context, isDark),
+                  const SizedBox(height: 16),
                   _buildModernMenuItem(
                     context: context,
                     icon: Icons.dashboard_rounded,
@@ -390,6 +394,164 @@ class AppDrawer extends ConsumerWidget {
               inactiveTrackColor: const Color(
                 0xFFFFB74D,
               ).withValues(alpha: 0.3),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector(BuildContext context, bool isDark) {
+    final currentLocale = context.currentLocale;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF42A5F5), Color(0xFF1E88E5)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.language_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DİL',
+                        style: TextStyle(
+                          color: isDark ? Colors.white : AppColors.lightText,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        currentLocale == 'tr' ? 'Türkçe' : 'English',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkHint : AppColors.lightHint,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildLanguageOption(
+                    context: context,
+                    flag: '🇹🇷',
+                    label: 'Türkçe',
+                    locale: 'tr',
+                    isSelected: currentLocale == 'tr',
+                    isDark: isDark,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLanguageOption(
+                    context: context,
+                    flag: '🇬🇧',
+                    label: 'English',
+                    locale: 'en',
+                    isSelected: currentLocale == 'en',
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption({
+    required BuildContext context,
+    required String flag,
+    required String label,
+    required String locale,
+    required bool isSelected,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        if (!isSelected) {
+          context.setLocale(locale);
+          Navigator.pop(context);
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? const Color(0xFF1E88E5).withValues(alpha: 0.2)
+                  : const Color(0xFF1E88E5).withValues(alpha: 0.1))
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : Colors.black.withValues(alpha: 0.03)),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF1E88E5)
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.08)),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected
+                      ? (isDark ? const Color(0xFF64B5F6) : const Color(0xFF1565C0))
+                      : (isDark ? AppColors.darkHint : AppColors.lightHint),
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/providers/theme_provider.dart';
 import 'package:sporlab/core/router/app_router.dart';
 import 'package:sporlab/core/services/notification_service.dart';
@@ -16,9 +17,7 @@ void main() async {
   // Initialize notification service
   await NotificationService().initialize();
 
-  runApp(
-    const ProviderScope(child: MyApp()),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -36,6 +35,17 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return LingoWrapper(
+          defaultLocale: 'tr',
+          supportedLocales: const ['en', 'tr'],
+          assetsPath: 'assets/lang',
+          loadingWidget: const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }
