@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
 
@@ -205,13 +206,21 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
   Widget _buildWeekdayLabels() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const weekdays = ['PZT', 'SAL', 'CAR', 'PER', 'CUM', 'CMT', 'PAZ'];
+    final weekdays = [
+      context.ln('mon_short'),
+      context.ln('tue_short'),
+      context.ln('wed_short'),
+      context.ln('thu_short'),
+      context.ln('fri_short'),
+      context.ln('sat_short'),
+      context.ln('sun_short'),
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: weekdays.map((day) {
-          final isWeekend = day == 'CMT' || day == 'PAZ';
+          final isWeekend = day == context.ln('sat_short') || day == context.ln('sun_short');
           return SizedBox(
             width: 40,
             child: Center(
@@ -234,39 +243,31 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 
   String _getMonthYearString(DateTime date) {
-    const months = [
-      'Ocak',
-      'Subat',
-      'Mart',
-      'Nisan',
-      'Mayis',
-      'Haziran',
-      'Temmuz',
-      'Agustos',
-      'Eylul',
-      'Ekim',
-      'Kasim',
-      'Aralik',
-    ];
-    return '${months[date.month - 1]} ${date.year}';
+    final monthKey = _getMonthKey(date.month);
+    return '${context.ln(monthKey)} ${date.year}';
   }
 
   String _getMonthName(int month) {
-    const months = [
-      'Oca',
-      'Sub',
-      'Mar',
-      'Nis',
-      'May',
-      'Haz',
-      'Tem',
-      'Agu',
-      'Eyl',
-      'Eki',
-      'Kas',
-      'Ara',
+    final monthKey = _getMonthKey(month);
+    return context.ln(monthKey);
+  }
+
+  String _getMonthKey(int month) {
+    const monthKeys = [
+      'jan_short',
+      'feb_short',
+      'mar_short',
+      'apr_short',
+      'may_short',
+      'jun_short',
+      'jul_short',
+      'aug_short',
+      'sep_short',
+      'oct_short',
+      'nov_short',
+      'dec_short',
     ];
-    return months[month - 1];
+    return monthKeys[month - 1];
   }
 
   Widget _buildYearGrid(AsyncValue<List<dynamic>> allRemindersAsync) {
