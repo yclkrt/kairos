@@ -382,6 +382,17 @@ class StepTrackerService {
     _localizedHourShort = context.ln('hour_short');
     _localizedMinuteShort = context.ln('minute_short');
 
+    // Mevcut weeklySteps map'inin anahtarlarını güncelle (değerleri koru)
+    if (_currentData.weeklySteps.isNotEmpty) {
+      final oldWeekly = _currentData.weeklySteps;
+      final newWeekly = <String, int>{};
+      final oldKeys = oldWeekly.keys.toList();
+      for (int i = 0; i < oldKeys.length && i < _localizedDaysShort.length; i++) {
+        newWeekly[_localizedDaysShort[i]] = oldWeekly[oldKeys[i]] ?? 0;
+      }
+      _currentData = _currentData.copyWith(weeklySteps: newWeekly);
+    }
+
     // Mevcut veriyi güncelle ve yeniden gönder
     _emitUpdate(_currentData);
   }
