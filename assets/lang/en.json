@@ -136,5 +136,6 @@
     "hour": "Hour",
     "notification": "Notification",
     "reminder_added": "reminder added",
-    "add": "Add"
+    "add": "Add",
+    "microphone_permission_required": "Microphone permission is required. Please grant permission."
 }

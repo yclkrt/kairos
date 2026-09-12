@@ -16,26 +16,26 @@ class VoiceCommandState {
   final bool isListening;
   final bool isAvailable;
   final String recognizedText;
-  final String? errorMessage;
+  final String? errorKey; // translation key for localized error message
 
   const VoiceCommandState({
     this.isListening = false,
     this.isAvailable = false,
     this.recognizedText = '',
-    this.errorMessage,
+    this.errorKey,
   });
 
   VoiceCommandState copyWith({
     bool? isListening,
     bool? isAvailable,
     String? recognizedText,
-    String? errorMessage,
+    String? errorKey,
   }) {
     return VoiceCommandState(
       isListening: isListening ?? this.isListening,
       isAvailable: isAvailable ?? this.isAvailable,
       recognizedText: recognizedText ?? this.recognizedText,
-      errorMessage: errorMessage,
+      errorKey: errorKey,
     );
   }
 }
@@ -58,7 +58,7 @@ class VoiceCommandNotifier extends StateNotifier<VoiceCommandState> {
       state = state.copyWith(isAvailable: isAvailable);
       if (!isAvailable) {
         state = state.copyWith(
-          errorMessage: 'Mikrofon izni gerekli. Lütfen izin verin.',
+          errorKey: 'microphone_permission_required',
         );
         return;
       }
@@ -67,7 +67,7 @@ class VoiceCommandNotifier extends StateNotifier<VoiceCommandState> {
     state = state.copyWith(
       isListening: true,
       recognizedText: '',
-      errorMessage: null,
+      errorKey: null,
     );
 
     await _service.startListening(
@@ -88,7 +88,7 @@ class VoiceCommandNotifier extends StateNotifier<VoiceCommandState> {
   }
 
   void clearError() {
-    state = state.copyWith(errorMessage: null);
+    state = state.copyWith(errorKey: null);
   }
 
   void clearRecognizedText() {

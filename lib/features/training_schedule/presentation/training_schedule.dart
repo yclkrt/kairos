@@ -77,10 +77,10 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
           ref.read(voiceCommandStateProvider.notifier).clearRecognizedText();
         }
 
-        if (next.errorMessage != null) {
+        if (next.errorKey != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(next.errorMessage!),
+              content: Text(context.ln(next.errorKey!)),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
