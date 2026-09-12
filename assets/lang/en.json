@@ -109,5 +109,22 @@
     "plan_not_found": "Plan not found",
     "explanation": "Explanation",
     "duration": "Duration",
-    "creation_date": "Creation Date"
+    "creation_date": "Creation Date",
+    "create_new_plan": "Create New Plan",
+    "create_your_plans": "Create Your Plans",
+    "click_the_+_button_to_start_training_plans": "Click the + button to\nstart training plans.",
+    "delete": "Delete",
+    "deleted": "Deleted",
+    "new_training_plan": "New Training Plan",
+    "plan_name": "Plan Name",
+    "examp_upper_body_workout": "Examp: Upper Body Workout",
+    "plan_name_is_required": "Plan name is required",
+    "plan_type": "Plan Type",
+    "training_content": "Training Content",
+    "training_the_wokout_details": "Training the workout details.",
+    "explanation_required": "Explanation required",
+    "time_required": "Time Required",
+    "enter_a_valid_duration": "Enter a valid duration",
+    "create_a_plan": "Create a Plan",
+    "the_plan_was_created": "the plan was created"
 }

@@ -110,5 +110,22 @@
     "plan_not_found": "Plan bulunamadı",
     "explanation": "Açıklama",
     "duration": "Süre",
-    "creation_date": "Oluşturulma Tarihi"
+    "creation_date": "Oluşturulma Tarihi",
+    "create_new_plan": "Yeni Plan Oluştur",
+    "create_your_plans": "Planlarınızı Oluşturun",
+    "click_the_+_button_to_start_training_plans": "Antrenman planlarına başlamak için \n+ butonuna tıklayın",
+    "delete": "Sil",
+    "deleted": "Silindi",
+    "new_training_plan": "Yeni Antrenman Planı",
+    "plan_name": "Plan Adı",
+    "examp_upper_body_workout": "Örnek: Üst Vücut Antrenmanı",
+    "plan_name_is_required": "Plan adı gerekli",
+    "plan_type": "Plan Türü",
+    "training_content": "Antrenman İçeriği",
+    "training_the_wokout_details": "Antrenman içeriğini giriniz.",
+    "explanation_required": "Açıklama gerekli",
+    "time_required": "Süre Gerekli",
+    "enter_a_valid_duration": "Geçerli bir süre girin",
+    "create_a_plan": "Plan Oluştur",
+    "the_plan_was_created": "planı oluşturuldu"
 }

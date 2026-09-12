@@ -36,9 +36,9 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'ANTRENMAN PLANLARI',
-              style: TextStyle(
+            Text(
+              context.ln('training_plans').toUpperCase(),
+              style: const TextStyle(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
                 fontSize: 16,
@@ -65,7 +65,7 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
                   size: 20,
                 ),
               ),
-              tooltip: 'Yeni Plan Oluştur',
+              tooltip: context.ln('create_new_plan').toUpperCase(),
               onPressed: () => _showCreatePlanBottomSheet(context),
             ),
           ),
@@ -116,9 +116,9 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
             shaderCallback: (bounds) => const LinearGradient(
               colors: [AppColors.primary, AppColors.secondary],
             ).createShader(bounds),
-            child: const Text(
-              'PLANLARINIZI OLUŞTURUN',
-              style: TextStyle(
+            child: Text(
+              context.ln('create_your_plans').toUpperCase(),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -128,7 +128,7 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Antrenman planlarına başlamak için\n+ butonuna tıklayın',
+            context.ln('click_the_+_button_to_start_training_plans'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -160,13 +160,13 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
               ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.delete_rounded, color: Colors.white, size: 24),
                 SizedBox(height: 2),
                 Text(
-                  'Sil',
+                  context.ln('delete'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 11,
@@ -180,7 +180,9 @@ class _TrainingPlansState extends ConsumerState<TrainingPlans> {
             ref.read(trainingPlansProvider.notifier).removePlan(plan.id);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${plan.name} silindi'),
+                content: Text(
+                  '${plan.name} ${context.ln('deleted').toLowerCase()}',
+                ),
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -425,8 +427,8 @@ class _CreatePlanBottomSheetState
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Text(
-                      'YENİ ANTRENMAN PLANI',
+                    Text(
+                      context.ln('new_training_plan').toUpperCase(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -436,8 +438,8 @@ class _CreatePlanBottomSheetState
                   ],
                 ),
                 const SizedBox(height: 28),
-                const Text(
-                  'PLAN ADI',
+                Text(
+                  context.ln('plan_name').toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -448,7 +450,7 @@ class _CreatePlanBottomSheetState
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    hintText: 'Örn: Üst Vücut Antrenmanı',
+                    hintText: context.ln('examp_upper_body_workout'),
                     prefixIcon: Icon(
                       Icons.fitness_center_rounded,
                       color: AppColors.primary.withValues(alpha: 0.7),
@@ -466,14 +468,14 @@ class _CreatePlanBottomSheetState
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Plan adı gerekli';
+                      return context.ln('plan_name_is_required');
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'PLAN TÜRÜ',
+                Text(
+                  context.ln('plan_type').toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -503,8 +505,8 @@ class _CreatePlanBottomSheetState
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'ANTRENMAN İÇERİĞİ',
+                Text(
+                  context.ln('training_content').toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -516,7 +518,7 @@ class _CreatePlanBottomSheetState
                   controller: _descriptionController,
                   maxLines: 2,
                   decoration: InputDecoration(
-                    hintText: 'Antrenman içeriğini giriniz.',
+                    hintText: context.ln('training_the_wokout_details'),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(bottom: 28),
                       child: Icon(
@@ -537,14 +539,14 @@ class _CreatePlanBottomSheetState
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Açıklama gerekli';
+                      return context.ln('explanation_required');
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'SÜRE (DK)',
+                Text(
+                  '${context.ln('duration').toUpperCase()} (${context.ln('minute_short').toUpperCase()})',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -574,11 +576,11 @@ class _CreatePlanBottomSheetState
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Süre gerekli';
+                      return context.ln('time_required');
                     }
                     final parsed = int.tryParse(value);
                     if (parsed == null || parsed <= 0) {
-                      return 'Geçerli bir süre girin';
+                      return context.ln('enter_a_valid_duration');
                     }
                     return null;
                   },
@@ -609,8 +611,8 @@ class _CreatePlanBottomSheetState
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
-                      'PLAN OLUŞTUR',
+                    child: Text(
+                      context.ln('create_a_plan').toUpperCase(),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -702,7 +704,7 @@ class _CreatePlanBottomSheetState
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${plan.name} planı oluşturuldu'),
+        content: Text('${plan.name} ${context.ln('the_plan_was_created')}'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: AppColors.accent,
