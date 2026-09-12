@@ -187,5 +187,7 @@
     "points_lead_at_the_end_of_the_match": "Points Lead at the End of the Match",
     "point_gap": "Point Gap",
     "avantage_based_on_point_difference": "Advantage Based on Point Difference",
-    "boundary": "Boundary"
+    "boundary": "Boundary",
+    "chung_received_5_penalties": "Chung Received 5 Penalties",
+    "hong_received_5_penalties": "Hong Received 5 Penalties"
 }

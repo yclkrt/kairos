@@ -1235,21 +1235,6 @@ class _TaekwondoScoreboardPageState
                     letterSpacing: isUnderOneMinute ? 2 : 4,
                   ),
                 ),
-                if (isUnderOneMinute)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      '${context.ln('seconds').toUpperCase()} . ${context.ln('millisecond').toUpperCase()}',
-                      style: TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.5,
-                        color: isCriticalTime
-                            ? const Color(0xFFFF5252).withValues(alpha: 0.8)
-                            : (isDark ? Colors.white38 : Colors.black38),
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),
@@ -1733,8 +1718,7 @@ class _TaekwondoScoreboardPageState
                   children: [
                     Expanded(
                       child: _buildPenaltyButton(
-                        label:
-                            'CHUNG ${context.ln('punishment').toUpperCase()}',
+                        label: 'CHUNG GAM-JEOM',
                         onTap: () => _addPenalty(true),
                         color: const Color(0xFF1565C0),
                       ),
@@ -1755,7 +1739,7 @@ class _TaekwondoScoreboardPageState
                   children: [
                     Expanded(
                       child: _buildPenaltyButton(
-                        label: 'HONG ${context.ln('punishment').toUpperCase()}',
+                        label: 'HONG GAM-JEOM',
                         onTap: () => _addPenalty(false),
                         color: const Color(0xFFC62828),
                       ),
@@ -1798,10 +1782,10 @@ class _TaekwondoScoreboardPageState
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 9,
                 fontWeight: FontWeight.w700,
                 color: color,
-                letterSpacing: 1,
+                letterSpacing: 0.5,
               ),
             ),
           ),
