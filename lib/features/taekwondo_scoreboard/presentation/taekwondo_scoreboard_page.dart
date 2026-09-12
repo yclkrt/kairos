@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/theme/app_gradients.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
@@ -626,7 +627,7 @@ class _TaekwondoScoreboardPageState
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Raund Süresi Ayarla',
+                              context.ln('set_round_duration'),
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w800,
@@ -638,7 +639,7 @@ class _TaekwondoScoreboardPageState
                       ),
                       const SizedBox(height: 18),
                       Text(
-                        'Hızlı Seçenekler',
+                        context.ln('quick_options'),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -682,7 +683,7 @@ class _TaekwondoScoreboardPageState
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Özel Süre Belirle',
+                        context.ln('set_custom_durations'),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -704,7 +705,7 @@ class _TaekwondoScoreboardPageState
                                 color: isDark ? Colors.white : Colors.black87,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Dakika',
+                                labelText: context.ln('minute'),
                                 labelStyle: TextStyle(
                                   fontSize: 12,
                                   color: isDark
@@ -742,7 +743,7 @@ class _TaekwondoScoreboardPageState
                                 color: isDark ? Colors.white : Colors.black87,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Saniye',
+                                labelText: context.ln('second'),
                                 labelStyle: TextStyle(
                                   fontSize: 12,
                                   color: isDark
@@ -769,7 +770,7 @@ class _TaekwondoScoreboardPageState
                             child: TextButton(
                               onPressed: () => Navigator.pop(ctx),
                               child: Text(
-                                'İptal',
+                                context.ln('cancel'),
                                 style: TextStyle(
                                   color: isDark
                                       ? Colors.white60
@@ -805,8 +806,8 @@ class _TaekwondoScoreboardPageState
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text(
-                                'Kaydet',
+                              child: Text(
+                                context.ln('save'),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 14,
@@ -842,13 +843,13 @@ class _TaekwondoScoreboardPageState
                 : AppGradients.taekwondo,
           ),
         ),
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.sports_martial_arts, color: Colors.white, size: 20),
             SizedBox(width: 8),
             Text(
-              'TAEKWONDO SKOR',
+              context.ln('taekwondo_scoreboard').toUpperCase(),
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -861,7 +862,7 @@ class _TaekwondoScoreboardPageState
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
-            tooltip: 'Maçı Sıfırla',
+            tooltip: context.ln('reset_match'),
             onPressed: _resetMatch,
           ),
         ],
@@ -924,7 +925,7 @@ class _TaekwondoScoreboardPageState
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '$_currentRound. RAUND BİTTİ ($_lastRoundBadge)',
+                '$_currentRound. ${context.ln('round_finish').toUpperCase()} ($_lastRoundBadge)',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
@@ -935,7 +936,7 @@ class _TaekwondoScoreboardPageState
             ),
             const SizedBox(height: 12),
             Text(
-              'RAUND KAZANANI',
+              context.ln('round_winner').toUpperCase(),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -972,7 +973,7 @@ class _TaekwondoScoreboardPageState
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '1 Dk Dinlenme Süresi Başlıyor...',
+                  context.ln('1_minute_rest_period_starting'),
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -1021,8 +1022,8 @@ class _TaekwondoScoreboardPageState
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    'DİNLENME ARASI (MOLA)',
+                  child: Text(
+                    context.ln('rest_break').toUpperCase(),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -1052,7 +1053,7 @@ class _TaekwondoScoreboardPageState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Molayı Geç',
+                            context.ln('skip_the_break'),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -1083,7 +1084,7 @@ class _TaekwondoScoreboardPageState
             ),
             const SizedBox(height: 4),
             Text(
-              '${_currentRound + 1}. Raunt otomatik başlayacak',
+              '${_currentRound + 1}. ${context.ln('the_round_will_start_automatically')}',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -1143,7 +1144,7 @@ class _TaekwondoScoreboardPageState
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'RAUND $_currentRound/3',
+                      '${context.ln('round').toUpperCase()} $_currentRound/3',
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
@@ -1230,7 +1231,7 @@ class _TaekwondoScoreboardPageState
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      'SANİYE . SALİSE',
+                      '${context.ln('seconds').toUpperCase()} . ${context.ln('millisecond').toUpperCase()}',
                       style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
@@ -1255,7 +1256,9 @@ class _TaekwondoScoreboardPageState
                 Expanded(
                   child: _buildTimerButton(
                     icon: Icons.play_arrow_rounded,
-                    label: isPaused ? 'DEVAM ET' : 'BAŞLAT',
+                    label: isPaused
+                        ? context.ln('continue').toUpperCase()
+                        : context.ln('start').toUpperCase(),
                     onTap: _startTimer,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
@@ -1294,7 +1297,7 @@ class _TaekwondoScoreboardPageState
                 Expanded(
                   child: _buildTimerButton(
                     icon: Icons.pause_rounded,
-                    label: 'DURAKLAT',
+                    label: context.ln('pause').toUpperCase(),
                     onTap: _pauseTimer,
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFF9900), Color(0xFFFF5E62)],
@@ -1385,16 +1388,6 @@ class _TaekwondoScoreboardPageState
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white54 : Colors.black45,
                 ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'BEST OF 3',
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1,
-                color: isDark ? Colors.white38 : Colors.black38,
               ),
             ),
           ],
@@ -1489,7 +1482,7 @@ class _TaekwondoScoreboardPageState
                   : null,
             ),
             child: Text(
-              'CEZA: $penalties / 5',
+              '${context.ln('punishment').toUpperCase()}: $penalties / 5',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -1552,7 +1545,7 @@ class _TaekwondoScoreboardPageState
       child: Column(
         children: [
           Text(
-            'PUAN EKLE / ÇIKAR',
+            context.ln('add_subtract_points').toUpperCase(),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -1714,7 +1707,7 @@ class _TaekwondoScoreboardPageState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'CEZA (GAM-JEOM)',
+                '${context.ln('punishment').toUpperCase()} (GAM-JEOM)',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -1732,7 +1725,8 @@ class _TaekwondoScoreboardPageState
                   children: [
                     Expanded(
                       child: _buildPenaltyButton(
-                        label: 'CHUNG CEZA',
+                        label:
+                            'CHUNG ${context.ln('punishment').toUpperCase()}',
                         onTap: () => _addPenalty(true),
                         color: const Color(0xFF1565C0),
                       ),
@@ -1741,7 +1735,7 @@ class _TaekwondoScoreboardPageState
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline, size: 20),
                       color: isDark ? Colors.white54 : Colors.black45,
-                      tooltip: 'Cezayı Geri Al',
+                      tooltip: context.ln('take_back_the_penalty'),
                       onPressed: () => _removePenalty(true),
                     ),
                   ],
@@ -1753,7 +1747,7 @@ class _TaekwondoScoreboardPageState
                   children: [
                     Expanded(
                       child: _buildPenaltyButton(
-                        label: 'HONG CEZA',
+                        label: 'HONG ${context.ln('punishment').toUpperCase()}',
                         onTap: () => _addPenalty(false),
                         color: const Color(0xFFC62828),
                       ),
@@ -1762,7 +1756,7 @@ class _TaekwondoScoreboardPageState
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline, size: 20),
                       color: isDark ? Colors.white54 : Colors.black45,
-                      tooltip: 'Cezayı Geri Al',
+                      tooltip: context.ln('take_back_the_penalty'),
                       onPressed: () => _removePenalty(false),
                     ),
                   ],
