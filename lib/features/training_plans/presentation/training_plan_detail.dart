@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/router/app_router.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
@@ -139,7 +140,7 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        plan.type.displayName.toUpperCase(),
+                        context.ln(plan.type.displayName).toUpperCase(),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,

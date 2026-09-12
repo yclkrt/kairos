@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/router/app_router.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/theme/app_gradients.dart';
@@ -486,7 +487,7 @@ class _CreatePlanBottomSheetState
                       child: _buildTypeOption(
                         type: TrainingPlanType.group,
                         icon: Icons.groups_rounded,
-                        label: 'GRUP DERSI',
+                        label: 'group_lesson',
                         color: AppColors.primary,
                       ),
                     ),
@@ -495,7 +496,7 @@ class _CreatePlanBottomSheetState
                       child: _buildTypeOption(
                         type: TrainingPlanType.personal,
                         icon: Icons.person_rounded,
-                        label: 'ÖZEL DERS',
+                        label: 'private_lesson',
                         color: AppColors.accent,
                       ),
                     ),
@@ -673,7 +674,7 @@ class _CreatePlanBottomSheetState
             ),
             const SizedBox(width: 8),
             Text(
-              label,
+              context.ln(label),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,

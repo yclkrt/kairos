@@ -102,5 +102,7 @@
     "millisecond": "Millisecond",
     "punishment": "Punishment",
     "add_subtract_points": "Add / Substract Points",
-    "take_back_the_penalty": "Take Back the Penalty"
+    "take_back_the_penalty": "Take Back the Penalty",
+    "group_lesson": "Group Lesson",
+    "private_lesson": "Private Lesson"
 }

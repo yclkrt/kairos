@@ -7,9 +7,9 @@ extension TrainingPlanTypeExtension on TrainingPlanType {
   String get displayName {
     switch (this) {
       case TrainingPlanType.group:
-        return 'Grup Dersi';
+        return 'group_lesson';
       case TrainingPlanType.personal:
-        return 'Özel Ders';
+        return 'private_lesson';
     }
   }
 }
