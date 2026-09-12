@@ -78,7 +78,7 @@ class ReminderListWidget extends ConsumerWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'HATIRLATICILAR',
+                    context.ln('reminders').toUpperCase(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
@@ -92,7 +92,7 @@ class ReminderListWidget extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: Text(
-                  _formatDate(selectedDate),
+                  _formatDate(selectedDate, context),
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? AppColors.darkHint : AppColors.lightHint,
@@ -160,7 +160,7 @@ class ReminderListWidget extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Bu tarih icin hatirlandici yok',
+                    context.ln('there_are_on_reminders_for_this_date'),
                     style: TextStyle(
                       color: (isDark ? AppColors.darkHint : AppColors.lightHint)
                           .withValues(alpha: 0.5),
@@ -185,8 +185,10 @@ class ReminderListWidget extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (e, _) =>
-          Text('Hata: $e', style: const TextStyle(color: AppColors.error)),
+      error: (e, _) => Text(
+        '${context.ln('error')}: $e',
+        style: const TextStyle(color: AppColors.error),
+      ),
     );
   }
 
@@ -374,7 +376,7 @@ class ReminderListWidget extends ConsumerWidget {
                           ),
                           const SizedBox(width: 14),
                           Text(
-                            'YENI HATIRLATICI',
+                            context.ln('new_reminder').toUpperCase(),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
@@ -393,7 +395,7 @@ class ReminderListWidget extends ConsumerWidget {
                           color: isDark ? Colors.white : AppColors.lightText,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Baslik',
+                          hintText: context.ln('title'),
                           hintStyle: TextStyle(
                             color:
                                 (isDark
@@ -444,7 +446,8 @@ class ReminderListWidget extends ConsumerWidget {
                           color: isDark ? Colors.white : AppColors.lightText,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Aciklama (opsiyonel)',
+                          hintText:
+                              '${context.ln('explanation')} (${context.ln('optional').toLowerCase()})',
                           hintStyle: TextStyle(
                             color:
                                 (isDark
@@ -489,7 +492,7 @@ class ReminderListWidget extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'BAŞLANGIÇ SAATİ',
+                        context.ln('start_time').toUpperCase(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -558,7 +561,7 @@ class ReminderListWidget extends ConsumerWidget {
                                 Text(
                                   selectedStartTime != null
                                       ? '${selectedStartTime!.hour.toString().padLeft(2, '0')}:${selectedStartTime!.minute.toString().padLeft(2, '0')}'
-                                      : 'Saat secmek icin tiklayin',
+                                      : context.ln('click_to_select_a_time'),
                                   style: TextStyle(
                                     color: selectedStartTime != null
                                         ? (isDark
@@ -581,7 +584,7 @@ class ReminderListWidget extends ConsumerWidget {
                       /// Bitiş Saati
                       const SizedBox(height: 20),
                       Text(
-                        'BİTİŞ SAATİ',
+                        context.ln('end_time').toUpperCase(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -650,7 +653,7 @@ class ReminderListWidget extends ConsumerWidget {
                                 Text(
                                   selectedEndTime != null
                                       ? '${selectedEndTime!.hour.toString().padLeft(2, '0')}:${selectedEndTime!.minute.toString().padLeft(2, '0')}'
-                                      : 'Saat secmek icin tiklayin',
+                                      : context.ln('click_to_select_a_time'),
                                   style: TextStyle(
                                     color: selectedEndTime != null
                                         ? (isDark
@@ -672,7 +675,7 @@ class ReminderListWidget extends ConsumerWidget {
 
                       const SizedBox(height: 20),
                       Text(
-                        'HATIRLATMA ZAMANI',
+                        context.ln('reminder_time').toUpperCase(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -691,8 +694,8 @@ class ReminderListWidget extends ConsumerWidget {
                             final isSelected =
                                 selectedOffset == offset && !isCustomOffset;
                             final label = offset == 0
-                                ? 'Tam zamanında'
-                                : '$offset dk once';
+                                ? context.ln('just_in_time')
+                                : '$offset ${context.ln('minutes_before')}';
                             return GestureDetector(
                               onTap: () => setDialogState(() {
                                 selectedOffset = offset;
@@ -775,7 +778,7 @@ class ReminderListWidget extends ConsumerWidget {
                                 ),
                               ),
                               child: Text(
-                                'Özel',
+                                context.ln('special'),
                                 style: TextStyle(
                                   color: isCustomOffset
                                       ? Colors.white
@@ -805,7 +808,7 @@ class ReminderListWidget extends ConsumerWidget {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: 'Dakika girin (örn: 7, 13, 22)',
+                            hintText: context.ln('enter_minutes'),
                             hintStyle: TextStyle(
                               color:
                                   (isDark
@@ -846,7 +849,7 @@ class ReminderListWidget extends ConsumerWidget {
                                   ? AppColors.darkHint
                                   : AppColors.lightHint,
                             ),
-                            suffixText: 'dk',
+                            suffixText: context.ln('minute_short'),
                             suffixStyle: TextStyle(
                               color: isDark
                                   ? AppColors.darkHint
@@ -870,7 +873,7 @@ class ReminderListWidget extends ConsumerWidget {
                                 ),
                               ),
                               child: Text(
-                                'IPTAL',
+                                context.ln('cancel').toUpperCase(),
                                 style: TextStyle(
                                   color: isDark
                                       ? AppColors.darkHint
@@ -917,8 +920,8 @@ class ReminderListWidget extends ConsumerWidget {
                                   alpha: 0.4,
                                 ),
                               ),
-                              child: const Text(
-                                'KAYDET',
+                              child: Text(
+                                context.ln('save').toUpperCase(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 1,
@@ -973,7 +976,7 @@ class ReminderListWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'SİLME ONAYI',
+                context.ln('deletion_confirmation').toUpperCase(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
@@ -983,7 +986,7 @@ class ReminderListWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                '${reminder.title} hatırlatıcısını silmek istediğinize emin misiniz?',
+                '${reminder.title} ${context.ln('are_you_sure_you_want_to_delete_the_reminder')}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -1004,7 +1007,7 @@ class ReminderListWidget extends ConsumerWidget {
                         ),
                       ),
                       child: Text(
-                        'VAZGEÇ',
+                        context.ln('give_up').toUpperCase(),
                         style: TextStyle(
                           color: isDark
                               ? AppColors.darkHint
@@ -1033,8 +1036,8 @@ class ReminderListWidget extends ConsumerWidget {
                             .deleteReminder(reminder.id);
                         Navigator.pop(ctx);
                       },
-                      child: const Text(
-                        'SİL',
+                      child: Text(
+                        context.ln('delete').toUpperCase(),
                         style: TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
@@ -1048,29 +1051,29 @@ class ReminderListWidget extends ConsumerWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    const days = [
-      'Pazartesi',
-      'Salı',
-      'Çarşamba',
-      'Perşembe',
-      'Cuma',
-      'Cumartesi',
-      'Pazar',
+  String _formatDate(DateTime date, BuildContext context) {
+    final days = [
+      context.ln('monday'),
+      context.ln('tuesday'),
+      context.ln('wednesday'),
+      context.ln('thursday'),
+      context.ln('friday'),
+      context.ln('saturday'),
+      context.ln('sunday'),
     ];
-    const months = [
-      'Ocak',
-      'Şubat',
-      'Mart',
-      'Nisan',
-      'Mayıs',
-      'Haziran',
-      'Temmuz',
-      'Ağustos',
-      'Eylül',
-      'Ekim',
-      'Kasım',
-      'Aralık',
+    final months = [
+      context.ln('january'),
+      context.ln('february'),
+      context.ln('march'),
+      context.ln('april'),
+      context.ln('may'),
+      context.ln('june'),
+      context.ln('july'),
+      context.ln('august'),
+      context.ln('september'),
+      context.ln('october'),
+      context.ln('november'),
+      context.ln('december'),
     ];
     return '${days[date.weekday - 1]}, ${date.day} ${months[date.month - 1]} ${date.year}';
   }

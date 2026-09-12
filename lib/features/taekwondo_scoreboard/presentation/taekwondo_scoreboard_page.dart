@@ -184,16 +184,18 @@ class _TaekwondoScoreboardPageState
     if (_chungPenalties >= 5) {
       _endRound(
         winnerIsChung: false,
-        reason: 'Chung 5 Ceza Aldı (Gam-jeom Sınırı)',
-        badge: '5 CEZA',
+        reason:
+            '${context.ln('chung_received_5_penalties')} (Gam-jeom ${context.ln('boundary')})',
+        badge: '5 GAM-JEOM',
       );
       return;
     }
     if (_hongPenalties >= 5) {
       _endRound(
         winnerIsChung: true,
-        reason: 'Hong 5 Ceza Aldı (Gam-jeom Sınırı)',
-        badge: '5 CEZA',
+        reason:
+            '${context.ln('hong_received_5_penalties')} (Gam-jeom ${context.ln('boundary')})',
+        badge: '5 GAM-JEOM',
       );
       return;
     }
@@ -202,16 +204,18 @@ class _TaekwondoScoreboardPageState
     if (_chungScore - _hongScore >= 12) {
       _endRound(
         winnerIsChung: true,
-        reason: '12 Puan Farkı Üstünlüğü ($_chungScore - $_hongScore)',
-        badge: '12 PUAN FARKI (PTG)',
+        reason:
+            '12 ${context.ln('avantage_based_on_point_difference')} ($_chungScore - $_hongScore)',
+        badge: '12 ${context.ln('point_gap').toUpperCase()} (PTG)',
       );
       return;
     }
     if (_hongScore - _chungScore >= 12) {
       _endRound(
         winnerIsChung: false,
-        reason: '12 Puan Farkı Üstünlüğü ($_hongScore - $_chungScore)',
-        badge: '12 PUAN FARKI (PTG)',
+        reason:
+            '12 ${context.ln('avantage_based_on_point_difference')} ($_hongScore - $_chungScore)',
+        badge: '12 ${context.ln('point_gap').toUpperCase()} (PTG)',
       );
       return;
     }
@@ -224,14 +228,16 @@ class _TaekwondoScoreboardPageState
     if (_chungScore > _hongScore) {
       _endRound(
         winnerIsChung: true,
-        reason: 'Süre Bitimi Puan Üstünlüğü ($_chungScore - $_hongScore)',
-        badge: 'SÜRE BİTİMİ',
+        reason:
+            '${context.ln('points_lead_at_the_end_of_the_match')} ($_chungScore - $_hongScore)',
+        badge: context.ln('expiration').toUpperCase(),
       );
     } else if (_hongScore > _chungScore) {
       _endRound(
         winnerIsChung: false,
-        reason: 'Süre Bitimi Puan Üstünlüğü ($_hongScore - $_chungScore)',
-        badge: 'SÜRE BİTİMİ',
+        reason:
+            '${context.ln('points_lead_at_the_end_of_the_match')} ($_hongScore - $_chungScore)',
+        badge: context.ln('expiration').toUpperCase(),
       );
     } else {
       // Puanlar eşitse: Beraberlik Çözümü Dialogu
@@ -246,15 +252,15 @@ class _TaekwondoScoreboardPageState
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.balance, color: AppColors.warning),
             SizedBox(width: 10),
-            Text('Raunt Berabere Bitti'),
+            Text(context.ln('the_round_ended_in_a_draw')),
           ],
         ),
         content: Text(
-          'Puanlar eşit ($_chungScore - $_hongScore).\nTaekwondo kurallarına göre teknik üstünlük sağlayan tarafı seçiniz:',
+          '${context.ln('scores_are_tied')} ($_chungScore - $_hongScore).\n${context.ln('select_the_side_that_achieved_technical_superiority_according_to_taekwondo_rules')}:',
         ),
         actions: [
           TextButton(
@@ -262,15 +268,15 @@ class _TaekwondoScoreboardPageState
               Navigator.pop(ctx);
               _endRound(
                 winnerIsChung: true,
-                reason: 'Teknik Üstünlük / Hakem Kararı',
-                badge: 'BERABERLİK ÇÖZÜMÜ',
+                reason: context.ln('technical_superiority_referee_decision'),
+                badge: context.ln('solution_for_a_draw').toUpperCase(),
               );
             },
             style: TextButton.styleFrom(
               foregroundColor: const Color(0xFF1565C0),
             ),
-            child: const Text(
-              'CHUNG KAZANDI',
+            child: Text(
+              'CHUNG ${context.ln('to_win').toUpperCase()}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -279,16 +285,16 @@ class _TaekwondoScoreboardPageState
               Navigator.pop(ctx);
               _endRound(
                 winnerIsChung: false,
-                reason: 'Teknik Üstünlük / Hakem Kararı',
-                badge: 'BERABERLİK ÇÖZÜMÜ',
+                reason: context.ln('technical_superiority_referee_decision'),
+                badge: context.ln('solution_for_a_draw').toUpperCase(),
               );
             },
             style: TextButton.styleFrom(
               foregroundColor: const Color(0xFFC62828),
             ),
-            child: const Text(
-              'HONG KAZANDI',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Text(
+              'HONG ${context.ln('to_win').toUpperCase()}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -314,7 +320,9 @@ class _TaekwondoScoreboardPageState
       newHongWins++;
     }
 
-    final winnerName = winnerIsChung ? 'CHUNG (MAVİ)' : 'HONG (KIRMIZI)';
+    final winnerName = winnerIsChung
+        ? 'CHUNG (${context.ln('blue').toUpperCase()})'
+        : 'HONG (${context.ln('red').toUpperCase()})';
     final winnerColor = winnerIsChung
         ? const Color(0xFF1565C0)
         : const Color(0xFFC62828);
@@ -406,7 +414,7 @@ class _TaekwondoScoreboardPageState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '$_currentRound. Raunt Başlamaya Hazır!',
+            '$_currentRound. ${context.ln('ready_to_start_the_round')}!',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           backgroundColor: AppColors.accent,
@@ -453,9 +461,9 @@ class _TaekwondoScoreboardPageState
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'MAÇ ŞAMPİYONU',
-                  style: TextStyle(
+                Text(
+                  context.ln('winning').toUpperCase(),
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -474,7 +482,7 @@ class _TaekwondoScoreboardPageState
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Raunt Skoru: $finalScore',
+                  '${context.ln('round_score')}: $finalScore',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -505,8 +513,8 @@ class _TaekwondoScoreboardPageState
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
-                      'YENİ MAÇ BAŞLAT',
+                    child: Text(
+                      context.ln('start_a_new_match').toUpperCase(),
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
                         fontSize: 14,
@@ -849,7 +857,7 @@ class _TaekwondoScoreboardPageState
             Icon(Icons.sports_martial_arts, color: Colors.white, size: 20),
             SizedBox(width: 8),
             Text(
-              context.ln('taekwondo_scoreboard').toUpperCase(),
+              "TAEKWONDO",
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -1482,7 +1490,7 @@ class _TaekwondoScoreboardPageState
                   : null,
             ),
             child: Text(
-              '${context.ln('punishment').toUpperCase()}: $penalties / 5',
+              'Gam-jeom: $penalties / 5',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
