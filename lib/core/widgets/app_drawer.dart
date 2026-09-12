@@ -367,7 +367,7 @@ class AppDrawer extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'TEMA',
+                    context.ln('theme').toUpperCase(),
                     style: TextStyle(
                       color: isDark ? Colors.white : AppColors.lightText,
                       fontSize: 14,
@@ -376,7 +376,9 @@ class AppDrawer extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isDark ? 'Koyu Tema' : 'Açık Tema',
+                    isDark
+                        ? context.ln('dark_theme')
+                        : context.ln('light_theme'),
                     style: TextStyle(
                       color: isDark ? AppColors.darkHint : AppColors.lightHint,
                       fontSize: 11,
@@ -485,7 +487,7 @@ class AppDrawer extends ConsumerWidget {
                     child: Row(
                       children: [
                         Text(
-                          'DİL',
+                          context.ln('language').toUpperCase(),
                           style: TextStyle(
                             color: isDark
                                 ? Colors.white

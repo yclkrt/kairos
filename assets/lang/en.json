@@ -189,5 +189,9 @@
     "avantage_based_on_point_difference": "Advantage Based on Point Difference",
     "boundary": "Boundary",
     "chung_received_5_penalties": "Chung Received 5 Penalties",
-    "hong_received_5_penalties": "Hong Received 5 Penalties"
+    "hong_received_5_penalties": "Hong Received 5 Penalties",
+    "language": "Language",
+    "dark_theme": "Dark Theme",
+    "light_theme": "Light Theme",
+    "theme": "Theme"
 }

@@ -190,5 +190,9 @@
     "avantage_based_on_point_difference": "Puan Farkı Üstünlüğü",
     "boundary": "Sınırı",
     "chung_received_5_penalties": "Chung 5 Ceza Aldı",
-    "hong_received_5_penalties": "Hong 5 Ceza Aldı"
+    "hong_received_5_penalties": "Hong 5 Ceza Aldı",
+    "language": "Dil",
+    "dark_theme": "Koyu Tema",
+    "light_theme": "Açık Tema",
+    "theme": "Tema"
 }
