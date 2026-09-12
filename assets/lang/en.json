@@ -128,5 +128,13 @@
     "create_a_plan": "Create a Plan",
     "the_plan_was_created": "the plan was created",
     "exactly_on_time": "Exactly on time",
-    "minutes_before": "min before"
+    "minutes_before": "min before",
+    "listening": "Listening",
+    "state_your_reminder": "State your reminder",
+    "reminder_found": "Reminder Found",
+    "title": "Title",
+    "hour": "Hour",
+    "notification": "Notification",
+    "reminder_added": "reminder added",
+    "add": "Add"
 }

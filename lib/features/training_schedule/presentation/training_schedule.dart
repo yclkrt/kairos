@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
 import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
@@ -110,8 +111,8 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'ANTRENMAN TAKVIMI',
+            Text(
+              context.ln('training_schedule').toUpperCase(),
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -170,9 +171,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: isAvailable || !isListening
-                    ? _toggleVoiceCommand
-                    : null,
+                onTap: isAvailable || !isListening ? _toggleVoiceCommand : null,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   width: 44,
@@ -184,14 +183,14 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                       colors: isListening
                           ? [AppColors.error, AppColors.workoutHigh]
                           : isDark
-                              ? [
-                                  Colors.white.withValues(alpha: 0.15),
-                                  Colors.white.withValues(alpha: 0.05)
-                                ]
-                              : [
-                                  Colors.white.withValues(alpha: 0.3),
-                                  Colors.white.withValues(alpha: 0.1)
-                                ],
+                          ? [
+                              Colors.white.withValues(alpha: 0.15),
+                              Colors.white.withValues(alpha: 0.05),
+                            ]
+                          : [
+                              Colors.white.withValues(alpha: 0.3),
+                              Colors.white.withValues(alpha: 0.1),
+                            ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -211,9 +210,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                         : null,
                   ),
                   child: Icon(
-                    isListening
-                        ? Icons.mic_off_rounded
-                        : Icons.mic_rounded,
+                    isListening ? Icons.mic_off_rounded : Icons.mic_rounded,
                     color: Colors.white,
                     size: 22,
                   ),
@@ -242,10 +239,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                     const Color(0xFF1A1A1A).withValues(alpha: 0.95),
                     const Color(0xFF1A1A1A),
                   ]
-                : [
-                    Colors.white.withValues(alpha: 0.95),
-                    Colors.white,
-                  ],
+                : [Colors.white.withValues(alpha: 0.95), Colors.white],
           ),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(24),
@@ -286,7 +280,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'DINLIYOR...',
+                    "${context.ln('listening').toUpperCase()}...",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -323,7 +317,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                 )
               else
                 Text(
-                  'Hatırlatıcınızı söyleyin...\nÖrn: "Antrenman saat 8\'de hatırlat beni"',
+                  '${context.ln('state_your_reminder')}...',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -338,8 +332,8 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                   _animationController.reset();
                   ref.read(voiceCommandStateProvider.notifier).stopListening();
                 },
-                child: const Text(
-                  'IPTAL',
+                child: Text(
+                  context.ln('cancel').toUpperCase(),
                   style: TextStyle(
                     color: AppColors.error,
                     fontWeight: FontWeight.w700,
@@ -383,7 +377,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
             ),
             const SizedBox(height: 16),
             Text(
-              'HATIRLATICI BULUNDU',
+              context.ln('reminder_found').toUpperCase(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
@@ -394,7 +388,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
             const SizedBox(height: 16),
             _buildResultRow(
               icon: Icons.title_rounded,
-              label: 'Baslik',
+              label: context.ln('title'),
               value: data.title,
               isDark: isDark,
             ),
@@ -402,7 +396,7 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
               const SizedBox(height: 12),
               _buildResultRow(
                 icon: Icons.access_time_rounded,
-                label: 'Saat',
+                label: context.ln('hour'),
                 value:
                     '${data.time!.hour.toString().padLeft(2, '0')}:${data.time!.minute.toString().padLeft(2, '0')}',
                 isDark: isDark,
@@ -412,8 +406,8 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
               const SizedBox(height: 12),
               _buildResultRow(
                 icon: Icons.notifications_active_rounded,
-                label: 'Bildirim',
-                value: '${data.offsetMinutes} dk once',
+                label: context.ln('notification'),
+                value: '${data.offsetMinutes} ${context.ln('minutes_before')}',
                 isDark: isDark,
               ),
             ],
@@ -424,9 +418,11 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                   child: TextButton(
                     onPressed: () => Navigator.pop(ctx),
                     child: Text(
-                      'VAZGEÇ',
+                      context.ln('give_up').toUpperCase(),
                       style: TextStyle(
-                        color: isDark ? AppColors.darkHint : AppColors.lightHint,
+                        color: isDark
+                            ? AppColors.darkHint
+                            : AppColors.lightHint,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -437,7 +433,9 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                   flex: 2,
                   child: ElevatedButton(
                     onPressed: () {
-                      ref.read(reminderActionsProvider).addReminder(
+                      ref
+                          .read(reminderActionsProvider)
+                          .addReminder(
                             date: selectedDate,
                             title: data.title,
                             description: data.description,
@@ -447,7 +445,9 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                       Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${data.title} hatırlatıcısı eklendi'),
+                          content: Text(
+                            '${data.title} ${context.ln('reminder_added')}',
+                          ),
                           backgroundColor: AppColors.accent,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
@@ -466,8 +466,8 @@ class _TrainingScheduleState extends ConsumerState<TrainingSchedule>
                       elevation: 8,
                       shadowColor: AppColors.accent.withValues(alpha: 0.4),
                     ),
-                    child: const Text(
-                      'EKLE',
+                    child: Text(
+                      context.ln('add').toUpperCase(),
                       style: TextStyle(fontWeight: FontWeight.w800),
                     ),
                   ),

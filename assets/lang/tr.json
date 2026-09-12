@@ -129,5 +129,13 @@
     "create_a_plan": "Plan Oluştur",
     "the_plan_was_created": "planı oluşturuldu",
     "exactly_on_time": "Tam zamanında",
-    "minutes_before": "dk önce"
+    "minutes_before": "dk önce",
+    "listening": "Dinliyor",
+    "state_your_reminder": "Hatırlatıcınızı söyleyin",
+    "reminder_found": "Hatırlatıcı Bulundu",
+    "title": "Başlık",
+    "hour": "Saat",
+    "notification": "Bildirim",
+    "reminder_added": "hatırlatıcısı eklendi",
+    "add": "Ekle"
 }
