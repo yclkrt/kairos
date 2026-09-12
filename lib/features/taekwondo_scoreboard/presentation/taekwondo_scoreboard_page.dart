@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lingo_easy/lingo_easy.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/core/theme/app_gradients.dart';
 import 'package:sporlab/core/widgets/main_scaffold.dart';
+import 'package:sporlab/core/services/voice_command_service.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
 
 enum MatchPhase {
   fighting, // Normal raunt devam ediyor veya başlatılmayı bekliyor
@@ -53,11 +56,17 @@ class _TaekwondoScoreboardPageState
   String _lastRoundReason = '';
   String _lastRoundBadge = '';
 
+  // Sesli Komut Yönetimi
+  final VoiceCommandService _voiceService = VoiceCommandService();
+  bool _isVoiceControlActive = false;
+  String _lastRecognizedText = '';
+
   @override
   void dispose() {
     _timer?.cancel();
     _restTimer?.cancel();
     _announcementTimer?.cancel();
+    _voiceService.stopListening();
     super.dispose();
   }
 
@@ -550,6 +559,511 @@ class _TaekwondoScoreboardPageState
     });
   }
 
+
+  // ==================== SESLI KOMUT YÖNETİMİ ====================
+
+  /// Sesli kontrolü başlat / durdur
+  Future<void> _toggleVoiceControl() async {
+    if (_isVoiceControlActive) {
+      await _stopVoiceControl();
+    } else {
+      await _startVoiceControl();
+    }
+  }
+
+  /// Sesli komut dinlemeyi başlat
+  Future<void> _startVoiceControl() async {
+    // Mikrofon izin durumunu kontrol et
+    final micStatus = await Permission.microphone.status;
+    
+    if (micStatus.isGranted) {
+      // İzin zaten verilmiş, doğrudan başlat
+      await _initializeVoiceService();
+    } else if (micStatus.isPermanentlyDenied) {
+      // İzin kalıcı olarak reddedildi, ayarlara yönlendir
+      if (mounted) _showPermissionSettingsDialog();
+    } else {
+      // İzin iste
+      final result = await Permission.microphone.request();
+      if (result.isGranted) {
+        await _initializeVoiceService();
+      } else if (result.isPermanentlyDenied) {
+        if (mounted) _showPermissionSettingsDialog();
+      } else {
+        if (mounted) {
+          _showCommandFeedback('Mikrofon izni verilmedi', isError: true);
+        }
+      }
+    }
+  }
+
+  /// Sesli servisi başlat
+  Future<void> _initializeVoiceService() async {
+    final initialized = await _voiceService.initialize();
+    if (!initialized) {
+      if (mounted) {
+        _showCommandFeedback('Sesli tanıma başlatılamadı', isError: true);
+      }
+      return;
+    }
+
+    setState(() {
+      _isVoiceControlActive = true;
+    });
+
+    await _startListeningSession();
+    if (mounted) {
+      _showCommandFeedback('🎤 Sesli komut aktif - Dinleniyor...');
+    }
+  }
+
+  /// İzin ayarları dialogunu göster
+  void _showPermissionSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.mic_off, color: Colors.redAccent, size: 28),
+            const SizedBox(width: 12),
+            const Text('Mikrofon İzni Gerekli'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Sesli komut özelliğini kullanabilmek için mikrofon izni gereklidir.',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.amber.shade700, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'İzin daha sonra reddedildi. Lütfen uygulama ayarlarından mikrofon iznini etkinleştirin.',
+                      style: TextStyle(fontSize: 12, color: Colors.amber.shade900),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              openAppSettings();
+            },
+            icon: const Icon(Icons.settings, size: 18),
+            label: const Text('Ayarları Aç'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00E676),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dinleme oturumu başlat
+  Future<void> _startListeningSession() async {
+    if (!_isVoiceControlActive) return;
+
+    await _voiceService.startListening(
+      onResult: (SpeechRecognitionResult result) {
+        if (result.finalResult && result.recognizedWords.isNotEmpty) {
+          _processVoiceCommand(result.recognizedWords);
+          // Sürekli dinleme için yeniden başlat
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (_isVoiceControlActive && mounted) {
+              _startListeningSession();
+            }
+          });
+        }
+      },
+      onDone: () {
+        // Dinleme bitti yeniden başlat (sürekli dinleme modu)
+        if (_isVoiceControlActive && mounted) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (_isVoiceControlActive && mounted) {
+              _startListeningSession();
+            }
+          });
+        }
+      },
+    );
+  }
+
+  /// Sesli komut durdur
+  Future<void> _stopVoiceControl() async {
+    await _voiceService.stopListening();
+    setState(() {
+      _isVoiceControlActive = false;
+    });
+    _showCommandFeedback('Sesli komut kapatıldı');
+  }
+
+
+  /// Tanınan komutları işle
+  void _processVoiceCommand(String command) {
+    final normalizedCommand = _normalizeCommand(command.toLowerCase().trim());
+    
+    setState(() {
+      _lastRecognizedText = command;
+    });
+
+    // === CEZA KOMUTLARI (Gam-jeom) ===
+    if (_matchAny(normalizedCommand, [
+      'chung gam jeom', 'mavi gam jeom', 'maviye gam jeom',
+      'maviye ceza', 'mavi ceza', 'chong gam jeom',
+    ])) {
+      _addPenalty(true);
+      _showCommandFeedback('🔵 CHUNG Ceza (Gam-jeom)! Hong +1 puan');
+      HapticFeedback.mediumImpact();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'hong gam jeom', 'kırmızı gam jeom', 'kırmızıya gam jeom',
+      'kırmızıya ceza', 'kırmızı ceza',
+    ])) {
+      _addPenalty(false);
+      _showCommandFeedback('🔴 HONG Ceza (Gam-jeom)! Chung +1 puan');
+      HapticFeedback.mediumImpact();
+      return;
+    }
+
+    // === CEZA GERİ AL ===
+    if (_matchAny(normalizedCommand, [
+      'mavi ceza geri al', 'chung ceza geri al',
+      'mavi ceza iptal', 'mavi ceza sil',
+    ])) {
+      _removePenalty(true);
+      _showCommandFeedback('🔵 CHUNG ceza geri alındı');
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı ceza geri al', 'hong ceza geri al',
+      'kırmızı ceza iptal', 'kırmızı ceza sil',
+    ])) {
+      _removePenalty(false);
+      _showCommandFeedback('🔴 HONG ceza geri alındı');
+      return;
+    }
+
+
+    // === PUAN EKLE - CHUNG (Mavi) ===
+    if (_matchAny(normalizedCommand, [
+      'chung puan', 'chong puan', 'mavi puan', 'maviye puan',
+      'mavi bir puan', 'chung bir puan', 'chong bir puan',
+      'maviye bir puan', 'chung 1 puan', 'chong 1 puan',
+    ])) {
+      _addScore(true, 1);
+      _showCommandFeedback('🔵 CHUNG +1 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'mavi iki puan', 'chung iki puan', 'chong iki puan',
+      'maviye iki puan', 'chung 2 puan', 'chong 2 puan', 'mavi 2 puan',
+    ])) {
+      _addScore(true, 2);
+      _showCommandFeedback('🔵 CHUNG +2 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'mavi üc puan', 'chung üc puan', 'chong üc puan',
+      'maviye üc puan', 'chung 3 puan', 'chong 3 puan', 'mavi 3 puan',
+      'mavi üç puan', 'chung üç puan', 'chong üç puan', 'maviye üç puan',
+    ])) {
+      _addScore(true, 3);
+      _showCommandFeedback('🔵 CHUNG +3 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'mavi dort puan', 'chung dort puan', 'chong dort puan',
+      'maviye dort puan', 'chung 4 puan', 'chong 4 puan', 'mavi 4 puan',
+      'mavi dört puan', 'chung dört puan', 'chong dört puan', 'maviye dört puan',
+    ])) {
+      _addScore(true, 4);
+      _showCommandFeedback('🔵 CHUNG +4 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'mavi bes puan', 'chung bes puan', 'chong bes puan',
+      'maviye bes puan', 'chung 5 puan', 'chong 5 puan', 'mavi 5 puan',
+      'mavi beş puan', 'chung beş puan', 'chong beş puan', 'maviye beş puan',
+    ])) {
+      _addScore(true, 5);
+      _showCommandFeedback('🔵 CHUNG +5 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    // === PUAN EKLE - HONG (Kırmızı) ===
+    if (_matchAny(normalizedCommand, [
+      'hong puan', 'kırmızı puan', 'kırmızıya puan',
+      'kırmızı bir puan', 'hong bir puan', 'hong 1 puan', 'kırmızı 1 puan',
+    ])) {
+      _addScore(false, 1);
+      _showCommandFeedback('🔴 HONG +1 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı iki puan', 'hong iki puan', 'kırmızıya iki puan',
+      'hong 2 puan', 'kırmızı 2 puan',
+    ])) {
+      _addScore(false, 2);
+      _showCommandFeedback('🔴 HONG +2 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı üc puan', 'hong üc puan', 'kırmızıya üc puan',
+      'hong 3 puan', 'kırmızı 3 puan', 'kırmızı üç puan', 'hong üç puan', 'kırmızıya üç puan',
+    ])) {
+      _addScore(false, 3);
+      _showCommandFeedback('🔴 HONG +3 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı dort puan', 'hong dort puan', 'kırmızıya dort puan',
+      'hong 4 puan', 'kırmızı 4 puan', 'kırmızı dört puan', 'hong dört puan', 'kırmızıya dört puan',
+    ])) {
+      _addScore(false, 4);
+      _showCommandFeedback('🔴 HONG +4 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı bes puan', 'hong bes puan', 'kırmızıya bes puan',
+      'hong 5 puan', 'kırmızı 5 puan', 'kırmızı beş puan', 'hong beş puan', 'kırmızıya beş puan',
+    ])) {
+      _addScore(false, 5);
+      _showCommandFeedback('🔴 HONG +5 Puan');
+      HapticFeedback.selectionClick();
+      return;
+    }
+
+    // === PUAN ÇIKAR (Düzeltme) ===
+    if (_matchAny(normalizedCommand, [
+      'mavi puan geri al', 'chung puan geri al', 'chong puan geri al',
+      'mavi puan sil', 'mavi puan iptal',
+    ])) {
+      _subtractScore(true, 1);
+      _showCommandFeedback('🔵 CHUNG -1 Puan (geri alındı)');
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'kırmızı puan geri al', 'hong puan geri al',
+      'kırmızı puan sil', 'kırmızı puan iptal',
+    ])) {
+      _subtractScore(false, 1);
+      _showCommandFeedback('🔴 HONG -1 Puan (geri alındı)');
+      return;
+    }
+
+    // === ZAMAN YÖNETİMİ ===
+    // "kalyeo" - Taekwondoya özel: Dur! Sporcular durur, saat durur
+    if (_matchAny(normalizedCommand, [
+      'kalyeo', 'kalyo', 'galyeo', 'galyo', 'kalio', 'kalyo',
+      'kaliyo', 'dur taekwondo', 'dur sporcular',
+    ])) {
+      if (_isRunning && _phase == MatchPhase.fighting) {
+        _pauseTimer();
+        _showCommandFeedback('🛑 KALYEO! Sporcular durdu, saat durdu');
+        HapticFeedback.heavyImpact();
+      } else if (!_isRunning && _phase == MatchPhase.fighting) {
+        _showCommandFeedback('Zaten duraklatılmış durumda');
+      } else {
+        _showCommandFeedback('Şu an dövüş süresi değil');
+      }
+      return;
+    }
+
+    // "kes out" / "kye-soğ" - Taekwondoya özel: Maçı devam ettir
+    if (_matchAny(normalizedCommand, [
+      'kes out', 'keso', 'kye soğ', 'kyesog', 'kye sog',
+      'kesh', 'kesh', 'devam taekwondo', 'devam sporcular',
+      'saldır', 'hücum', 'dövüş devam',
+    ])) {
+      if (!_isRunning && _phase == MatchPhase.fighting) {
+        _startTimer();
+        _showCommandFeedback('▶️ KES OUT! Maç devam ediyor!');
+        HapticFeedback.heavyImpact();
+      } else if (_isRunning) {
+        _showCommandFeedback('Maç zaten devam ediyor');
+      } else {
+        _showCommandFeedback('Şu an dövüş süresi değil');
+      }
+      return;
+    }
+
+    // "başla", "start", "dövüşü başlat" - Genel başlatma
+    if (_matchAny(normalizedCommand, [
+      'basla', 'dövüsü basla', 'macı basla', 'baslat',
+      'zamanı basla', 'saati basla', 'devam et', 'devam',
+    ])) {
+      if (!_isRunning && _phase == MatchPhase.fighting) {
+        _startTimer();
+        _showCommandFeedback('⏱️ Zaman Başlatıldı!');
+        HapticFeedback.heavyImpact();
+      } else if (_phase != MatchPhase.fighting) {
+        _showCommandFeedback('Şu an dövüş süresi değil');
+      }
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'dur', 'duraklat', 'durdur', 'zamanı durdur', 'saati durdur', 'bekle',
+    ])) {
+      if (_isRunning) {
+        _pauseTimer();
+        _showCommandFeedback('⏸️ Zaman Duraklatıldı');
+        HapticFeedback.heavyImpact();
+      }
+      return;
+    }
+
+    // === MAÇ YÖNETİMİ ===
+    if (_matchAny(normalizedCommand, [
+      'sıfırla', 'macı sıfırla', 'yeniden basla', 'yeni mac', 'hepsini sıfırla',
+    ])) {
+      _resetMatch();
+      _showCommandFeedback('🔄 Maç Sıfırlandı');
+      HapticFeedback.heavyImpact();
+      return;
+    }
+
+    if (_matchAny(normalizedCommand, [
+      'raundu bitir', 'raund bitis', 'raundı bitir', 'round bitir',
+    ])) {
+      if (_phase == MatchPhase.fighting && _remainingMs > 0) {
+        _handleTimeOut();
+        _showCommandFeedback('🏁 Raund Sona Erdi');
+        HapticFeedback.heavyImpact();
+      }
+      return;
+    }
+
+    // === KOMUTU ANLAMADIM ===
+    _showCommandFeedback('❌ Anlaşılmadı: "$command"', isError: true);
+  }
+
+
+  /// Komut normalize et
+  String _normalizeCommand(String text) {
+    return text
+        .replaceAll(RegExp(r'[^\w\sıçğüöşİÇĞÜÖŞ]'), '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll('chong', 'chung')
+        .replaceAll('kızıl', 'kırmızı')
+        .trim();
+  }
+
+  /// Komut eşleşme kontrolü
+  bool _matchAny(String command, List<String> patterns) {
+    for (final pattern in patterns) {
+      if (command.contains(pattern) || pattern.contains(command)) {
+        return true;
+      }
+      if (_isSimilar(command, pattern)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// İki string arasında benzerlik kontrolü
+  bool _isSimilar(String a, String b) {
+    if (a.length < 5 || b.length < 5) return false;
+    final wordsA = a.split(' ');
+    final wordsB = b.split(' ');
+    for (final wordA in wordsA) {
+      if (wordA.length < 3) continue;
+      for (final wordB in wordsB) {
+        if (wordB.length < 3) continue;
+        if (wordA.contains(wordB) || wordB.contains(wordA)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Komut feedback göster
+  void _showCommandFeedback(String message, {bool isError = false}) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isError ? Icons.error_outline : Icons.check_circle_outline,
+              color: isError ? Colors.redAccent : Colors.greenAccent,
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isError 
+            ? const Color(0xFF4E1E1E) 
+            : const Color(0xFF1E4E2E),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: isError ? 2 : 1, milliseconds: 500),
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   void _setCustomRoundDuration(int totalSeconds) {
     _pauseTimer();
     setState(() {
@@ -897,6 +1411,8 @@ class _TaekwondoScoreboardPageState
               _buildScoringButtons(isDark),
               const SizedBox(height: 16),
               _buildPenaltySection(isDark),
+              const SizedBox(height: 16),
+              _buildVoiceControlPanel(isDark),
             ],
           ),
         ),
@@ -1793,4 +2309,158 @@ class _TaekwondoScoreboardPageState
       ),
     );
   }
+
+  /// Sesli kontrol paneli
+  Widget _buildVoiceControlPanel(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E24) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _isVoiceControlActive
+              ? const Color(0xFF00E676).withValues(alpha: 0.5)
+              : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
+          width: _isVoiceControlActive ? 2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _isVoiceControlActive
+                ? const Color(0xFF00E676).withValues(alpha: 0.15)
+                : (isDark ? Colors.black.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.04)),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Başlık ve mikrofon ikonu
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _isVoiceControlActive
+                      ? const Color(0xFF00E676).withValues(alpha: 0.15)
+                      : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  _isVoiceControlActive ? Icons.mic : Icons.mic_none,
+                  color: _isVoiceControlActive ? const Color(0xFF00E676) : (isDark ? Colors.white54 : Colors.black45),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'SESLİ KONTROL',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white54 : Colors.black45,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    if (_isVoiceControlActive && _lastRecognizedText.isNotEmpty)
+                      Text(
+                        'Son: "$_lastRecognizedText"',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+              // Aktif dinleme göstergesi
+              if (_isVoiceControlActive)
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF00E676),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Başlat / Durdur butonu
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _toggleVoiceControl,
+              icon: Icon(
+                _isVoiceControlActive ? Icons.stop : Icons.mic,
+                size: 18,
+              ),
+              label: Text(
+                _isVoiceControlActive ? 'DURDUR' : 'SESLİ KOMUT BAŞLAT',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                  letterSpacing: 1,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _isVoiceControlActive 
+                    ? const Color(0xFFCF6679) 
+                    : const Color(0xFF00E676),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Kullanılabilen komutlar
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: [
+              _buildCommandChip('kalyeo', isDark),
+              _buildCommandChip('kes out', isDark),
+              _buildCommandChip('chung gam-jeom', isDark),
+              _buildCommandChip('hong gam-jeom', isDark),
+              _buildCommandChip('mavi puan', isDark),
+              _buildCommandChip('kırmızı puan', isDark),
+              _buildCommandChip('sıfırla', isDark),
+              _buildCommandChip('raundu bitir', isDark),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommandChip(String label, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white54 : Colors.black45,
+        ),
+      ),
+    );
+  }
+
 }
