@@ -105,5 +105,10 @@
     "add_subtract_points": "Puan Ekle / Çıkar",
     "take_back_the_penalty": "Cezayı Geri Al",
     "group_lesson": "Grup Dersi",
-    "private_lesson": "Özel Ders"
+    "private_lesson": "Özel Ders",
+    "plan_details": "Plan Detayı",
+    "plan_not_found": "Plan bulunamadı",
+    "explanation": "Açıklama",
+    "duration": "Süre",
+    "creation_date": "Oluşturulma Tarihi"
 }

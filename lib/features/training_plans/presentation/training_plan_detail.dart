@@ -28,8 +28,9 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
   }
 
   Future<void> _loadPlan() async {
-    final plan =
-        await ref.read(trainingPlansProvider.notifier).getPlanById(widget.planId);
+    final plan = await ref
+        .read(trainingPlansProvider.notifier)
+        .getPlanById(widget.planId);
     if (mounted) {
       setState(() {
         _plan = plan;
@@ -49,9 +50,12 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
           onPressed: () => context.go(Routes.trainingPlans),
         ),
         title: Text(
-          _plan?.name ?? 'PLAN DETAYI',
+          _plan?.name ?? context.ln('plan_details').toUpperCase(),
           style: const TextStyle(
-              fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
+            fontSize: 16,
+          ),
         ),
       ),
       body: Container(
@@ -67,8 +71,8 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _plan == null
-                ? _buildNotFound()
-                : _buildContent(isDark),
+            ? _buildNotFound()
+            : _buildContent(isDark),
       ),
     );
   }
@@ -78,15 +82,19 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off_rounded,
-              size: 64, color: Colors.grey.withValues(alpha: 0.4)),
+          Icon(
+            Icons.search_off_rounded,
+            size: 64,
+            color: Colors.grey.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 16),
           Text(
-            'Plan bulunamadı',
+            context.ln('plan_not_found').toUpperCase(),
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.withValues(alpha: 0.6)),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.withValues(alpha: 0.6),
+            ),
           ),
         ],
       ),
@@ -115,9 +123,10 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                    color: typeColor.withValues(alpha: 0.3),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6)),
+                  color: typeColor.withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
               ],
             ),
             child: Row(
@@ -167,7 +176,7 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
           const SizedBox(height: 24),
           _buildDetailCard(
             icon: Icons.description_rounded,
-            title: 'AÇIKLAMA',
+            title: context.ln('explanation').toUpperCase(),
             content: plan.description,
             color: typeColor,
             isDark: isDark,
@@ -175,15 +184,16 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
           const SizedBox(height: 16),
           _buildDetailCard(
             icon: Icons.timer_outlined,
-            title: 'SÜRE',
-            content: '${plan.durationMinutes} dakika',
+            title: context.ln('duration').toUpperCase(),
+            content:
+                '${plan.durationMinutes} ${context.ln('minute').toLowerCase()}',
             color: typeColor,
             isDark: isDark,
           ),
           const SizedBox(height: 16),
           _buildDetailCard(
             icon: Icons.calendar_today_rounded,
-            title: 'OLUŞTURULMA TARİHİ',
+            title: context.ln('creation_date').toUpperCase(),
             content: _formatDate(plan.createdAt),
             color: typeColor,
             isDark: isDark,
@@ -209,9 +219,10 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
         border: Border.all(color: color.withValues(alpha: 0.15), width: 1.5),
         boxShadow: [
           BoxShadow(
-              color: color.withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4)),
+            color: color.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
@@ -262,5 +273,3 @@ class _TrainingPlanDetailState extends ConsumerState<TrainingPlanDetail> {
     return '$day/$month/$year';
   }
 }
-
-
