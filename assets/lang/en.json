@@ -126,5 +126,7 @@
     "time_required": "Time Required",
     "enter_a_valid_duration": "Enter a valid duration",
     "create_a_plan": "Create a Plan",
-    "the_plan_was_created": "the plan was created"
+    "the_plan_was_created": "the plan was created",
+    "exactly_on_time": "Exactly on time",
+    "minutes_before": "min before"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lingo_easy/lingo_easy.dart';
 import 'package:sporlab/core/theme/app_colors.dart';
 import 'package:sporlab/features/training_schedule/model/reminder.dart';
 import 'package:sporlab/features/training_schedule/providers/reminder_provider.dart';
@@ -265,7 +266,9 @@ class ReminderListWidget extends ConsumerWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        reminder.offsetDisplay,
+                        reminder.reminderOffsetMinutes == 0
+                            ? context.ln(reminder.offsetDisplayKey)
+                            : '${reminder.offsetValue} ${context.ln(reminder.offsetDisplayKey)}',
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,

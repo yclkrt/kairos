@@ -62,10 +62,14 @@ class Reminder {
   }
 
   /// Returns the offset display string (e.g., "15 dk önce")
-  String get offsetDisplay {
-    if (reminderOffsetMinutes == 0) return 'Tam zamanında';
-    return '$reminderOffsetMinutes dk önce';
+  /// Returns translation keys for localization
+  String get offsetDisplayKey {
+    if (reminderOffsetMinutes == 0) return 'exactly_on_time';
+    return 'minutes_before';
   }
+
+  /// Returns the formatted offset value (e.g., "15" for 15 minutes)
+  String get offsetValue => reminderOffsetMinutes.toString();
 
   Reminder copyWith({
     String? id,

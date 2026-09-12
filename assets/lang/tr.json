@@ -127,5 +127,7 @@
     "time_required": "Süre Gerekli",
     "enter_a_valid_duration": "Geçerli bir süre girin",
     "create_a_plan": "Plan Oluştur",
-    "the_plan_was_created": "planı oluşturuldu"
+    "the_plan_was_created": "planı oluşturuldu",
+    "exactly_on_time": "Tam zamanında",
+    "minutes_before": "dk önce"
 }
